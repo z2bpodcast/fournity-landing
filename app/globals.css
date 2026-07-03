@@ -1,0 +1,69 @@
+:root {
+  --deep: #0a0a0f;
+  --deep-2: #131320;
+  --deep-3: #1b1b2e;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dark: #9c7e2e;
+  --cream: #f5f0e8;
+  --cream-2: #ddd5c4;
+  --muted: #8a8a9a;
+  --white: #ffffff;
+  --error: #e74c3c;
+  --wa-green: #25d366;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--deep);
+  color: var(--cream);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+::selection {
+  background: rgba(201, 168, 76, 0.3);
+  color: var(--white);
+}
+
+/* Focus visibility for keyboard users */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
