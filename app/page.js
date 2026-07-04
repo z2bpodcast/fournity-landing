@@ -41,6 +41,7 @@ export default function Home() {
   // Lead gate state
   const [leadName, setLeadName] = useState('');
   const [leadEmail, setLeadEmail] = useState('');
+  const [leadWhatsapp, setLeadWhatsapp] = useState('');
   const [leadErr, setLeadErr] = useState('');
   const [leadBusy, setLeadBusy] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
@@ -81,11 +82,16 @@ export default function Home() {
       setLeadErr('Please enter a valid email address.');
       return;
     }
+    if (!leadWhatsapp.trim()) {
+      setLeadErr('Please enter your WhatsApp number.');
+      return;
+    }
     setLeadBusy(true);
     try {
       await supabase.from('fournity_leads').insert({
         full_name: leadName.trim(),
         email: leadEmail.trim(),
+        whatsapp: leadWhatsapp.trim(),
         source: 'landing_page',
         referral_code: referralCode || null,
       });
@@ -94,7 +100,22 @@ export default function Home() {
       console.error('Lead insert failed', err);
     }
     setLeadBusy(false);
+    // Remember on this browser so they never see this gate again
+    window.localStorage.setItem(
+      'fournity_registered',
+      JSON.stringify({ name: leadName.trim(), email: leadEmail.trim(), whatsapp: leadWhatsapp.trim() })
+    );
     window.location.href = BOOK_URL;
+  }
+
+  function goToFreeChapters() {
+    const saved = window.localStorage.getItem('fournity_registered');
+    if (saved) {
+      // Already registered on this browser — skip the gate entirely
+      window.location.href = BOOK_URL;
+    } else {
+      setGateOpen(true);
+    }
   }
 
   function openOrder() {
@@ -221,7 +242,7 @@ export default function Home() {
           Humanity — before Genesis 1:1, lost in Genesis 3, restored in Acts 2.
         </p>
         <div className={styles.heroBtns}>
-          <button className={styles.btnPrimary} onClick={() => setGateOpen(true)}>
+          <button className={styles.btnPrimary} onClick={goToFreeChapters}>
             Read Free Chapters
           </button>
           <button className={styles.btnOutline} onClick={openOrder}>
@@ -471,6 +492,15 @@ export default function Home() {
                 value={leadEmail}
                 onChange={(e) => setLeadEmail(e.target.value)}
                 placeholder="your@email.com"
+              />
+            </div>
+            <div className={styles.field}>
+              <label>WhatsApp Number</label>
+              <input
+                type="tel"
+                value={leadWhatsapp}
+                onChange={(e) => setLeadWhatsapp(e.target.value)}
+                placeholder="e.g. 0771234567"
               />
             </div>
             <button className={styles.btnPrimary} style={{ width: '100%' }} disabled={leadBusy}>
