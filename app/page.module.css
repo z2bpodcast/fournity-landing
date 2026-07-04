@@ -39,6 +39,26 @@
   margin-bottom: 8px;
 }
 
+/* ===== BOOK COVER SHOWCASE ===== */
+.bookShowcase {
+  display: flex;
+  justify-content: center;
+  padding: 50px 24px 70px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(201, 168, 76, 0.08) 0%, transparent 60%),
+    var(--deep);
+}
+
+.bookCoverImg {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(201, 168, 76, 0.25);
+}
+
 .heroEyebrow {
   font-family: 'Inter', sans-serif;
   font-size: 11px;

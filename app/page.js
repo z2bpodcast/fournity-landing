@@ -232,6 +232,17 @@ export default function Home() {
         <div className={styles.scrollHint}>Scroll to explore</div>
       </section>
 
+      {/* BOOK COVER SHOWCASE */}
+      <section className={styles.bookShowcase}>
+        <Image
+          className={styles.bookCoverImg}
+          src="/fournity-book-cover.jpg"
+          alt="FOURNITY — Trinity and I Are Four-nity, by Rev Mokoro Manana (book cover)"
+          width={1071}
+          height={1469}
+        />
+      </section>
+
       {/* THREE-ACT TIMELINE — signature element */}
       <section className={styles.timeline}>
         <div className={styles.container}>
