@@ -288,6 +288,13 @@ export default function Home() {
       {/* ILLUMINATION STATEMENT */}
       <section className={styles.statement}>
         <div className={styles.container}>
+          <Image
+            src="/fournity-logo-typo-fixed.png"
+            alt="FOURNITY Triquetra — The Father: Love Originates, The Son: Love Revealed, The Holy Spirit: Love Poured Out"
+            width={420}
+            height={420}
+            style={{ width: '100%', maxWidth: 420, height: 'auto', margin: '0 auto 40px', display: 'block' }}
+          />
           <div className={styles.statementMark}>I · D · E · N · T · I · T · Y</div>
           <p className={styles.statementText}>
             <strong>FOURNITY</strong> is an Illumination of the revelation of the Unity of
