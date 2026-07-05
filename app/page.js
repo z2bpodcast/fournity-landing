@@ -7,7 +7,7 @@ import styles from './page.module.css';
 import { supabase } from '../lib/supabaseClient';
 
 const YOCO_KEY = process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY || '';
-const BOOK_URL = process.env.NEXT_PUBLIC_BOOK_URL || 'https://fournity-digital.vercel.app';
+const BOOK_URL = process.env.NEXT_PUBLIC_BOOK_URL || '/read.html';
 const WHATSAPP_NUMBER = '27774901639';
 const WHATSAPP_DISPLAY = '+27 (0)77 490 1639';
 const REF_STORAGE_KEY = 'fournity_ref';
@@ -41,9 +41,13 @@ export default function Home() {
   // Lead gate state
   const [leadName, setLeadName] = useState('');
   const [leadEmail, setLeadEmail] = useState('');
+  const [leadWhatsapp, setLeadWhatsapp] = useState('');
+  const [leadPassword, setLeadPassword] = useState('');
   const [leadErr, setLeadErr] = useState('');
   const [leadBusy, setLeadBusy] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
+  const [gateMode, setGateMode] = useState('register'); // 'register', 'login', or 'forgot'
+  const [resetSent, setResetSent] = useState(false);
 
   // Order overlay state
   const [orderOpen, setOrderOpen] = useState(false);
@@ -81,11 +85,40 @@ export default function Home() {
       setLeadErr('Please enter a valid email address.');
       return;
     }
+    if (!leadWhatsapp.trim() || leadWhatsapp.trim().length < 9) {
+      setLeadErr('Please enter a valid WhatsApp number.');
+      return;
+    }
+    if (!leadPassword || leadPassword.length < 6) {
+      setLeadErr('Please choose a password of at least 6 characters.');
+      return;
+    }
     setLeadBusy(true);
+
+    // Create a secure account so the reader can log back in later.
+    // Supabase Auth handles password hashing/storage — we never see or store the raw password.
+    const { error: authError } = await supabase.auth.signUp({
+      email: leadEmail.trim(),
+      password: leadPassword,
+      options: {
+        data: {
+          full_name: leadName.trim(),
+          whatsapp: leadWhatsapp.trim(),
+        },
+      },
+    });
+
+    if (authError && !authError.message.toLowerCase().includes('already registered')) {
+      setLeadErr(authError.message || 'Could not create your account. Please try again.');
+      setLeadBusy(false);
+      return;
+    }
+
     try {
       await supabase.from('fournity_leads').insert({
         full_name: leadName.trim(),
         email: leadEmail.trim(),
+        whatsapp: leadWhatsapp.trim(),
         source: 'landing_page',
         referral_code: referralCode || null,
       });
@@ -94,7 +127,69 @@ export default function Home() {
       console.error('Lead insert failed', err);
     }
     setLeadBusy(false);
-    window.location.href = BOOK_URL;
+
+    // Hand the reader straight into the book, still on fournity.co.za,
+    // passing their details so the book doesn't ask them to register again.
+    const handoff = new URLSearchParams({
+      name: leadName.trim(),
+      email: leadEmail.trim(),
+    });
+    window.location.href = `${BOOK_URL}?${handoff.toString()}`;
+  }
+
+  async function submitLogin(e) {
+    e.preventDefault();
+    setLeadErr('');
+    if (!leadEmail.trim() || !leadEmail.includes('@')) {
+      setLeadErr('Please enter a valid email address.');
+      return;
+    }
+    if (!leadPassword) {
+      setLeadErr('Please enter your password.');
+      return;
+    }
+    setLeadBusy(true);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: leadEmail.trim(),
+      password: leadPassword,
+    });
+
+    setLeadBusy(false);
+
+    if (error) {
+      setLeadErr('Incorrect email or password. Please try again, or register below if you\'re new.');
+      return;
+    }
+
+    const name = data?.user?.user_metadata?.full_name || '';
+    const handoff = new URLSearchParams({
+      name,
+      email: leadEmail.trim(),
+    });
+    window.location.href = `${BOOK_URL}?${handoff.toString()}`;
+  }
+
+  async function submitForgotPassword(e) {
+    e.preventDefault();
+    setLeadErr('');
+    if (!leadEmail.trim() || !leadEmail.includes('@')) {
+      setLeadErr('Please enter a valid email address.');
+      return;
+    }
+    setLeadBusy(true);
+
+    const { error } = await supabase.auth.resetPasswordForEmail(leadEmail.trim(), {
+      redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
+    });
+
+    setLeadBusy(false);
+
+    if (error) {
+      setLeadErr(error.message || 'Could not send reset email. Please try again.');
+      return;
+    }
+    setResetSent(true);
   }
 
   function openOrder() {
@@ -453,37 +548,163 @@ export default function Home() {
       {/* LEAD GATE OVERLAY */}
       <div className={`${styles.overlay} ${gateOpen ? styles.open : ''}`}>
         <div className={styles.overlayCard}>
-          <button className={styles.overlayClose} onClick={() => setGateOpen(false)}>
+          <button
+            className={styles.overlayClose}
+            onClick={() => { setGateOpen(false); setResetSent(false); setLeadErr(''); }}
+          >
             ×
           </button>
-          <div className={styles.overlayTitle}>Access Your Free Preview</div>
+          <div className={styles.overlayTitle}>
+            {gateMode === 'register' && 'Access Your Free Preview'}
+            {gateMode === 'login' && 'Welcome Back'}
+            {gateMode === 'forgot' && 'Reset Your Password'}
+          </div>
           <div className={styles.overlaySub}>
-            Read the first chapter of every Layer — free. No payment required.
+            {gateMode === 'register' && 'Read the first chapter of every Layer — free. No payment required.'}
+            {gateMode === 'login' && 'Log in to continue reading where you left off.'}
+            {gateMode === 'forgot' && 'We\'ll email you a link to set a new password.'}
           </div>
           {leadErr && <div className={styles.errBox}>{leadErr}</div>}
-          <form onSubmit={submitLead}>
-            <div className={styles.field}>
-              <label>Full Name</label>
-              <input
-                type="text"
-                value={leadName}
-                onChange={(e) => setLeadName(e.target.value)}
-                placeholder="Your name"
-              />
-            </div>
-            <div className={styles.field}>
-              <label>Email Address</label>
-              <input
-                type="email"
-                value={leadEmail}
-                onChange={(e) => setLeadEmail(e.target.value)}
-                placeholder="your@email.com"
-              />
-            </div>
-            <button className={styles.btnPrimary} style={{ width: '100%' }} disabled={leadBusy}>
-              {leadBusy ? 'Please wait...' : 'Read Free Preview →'}
-            </button>
-          </form>
+
+          {gateMode === 'register' && (
+            <form onSubmit={submitLead}>
+              <div className={styles.field}>
+                <label>Full Name</label>
+                <input
+                  type="text"
+                  value={leadName}
+                  onChange={(e) => setLeadName(e.target.value)}
+                  placeholder="Your name"
+                />
+              </div>
+              <div className={styles.field}>
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  value={leadEmail}
+                  onChange={(e) => setLeadEmail(e.target.value)}
+                  placeholder="your@email.com"
+                />
+              </div>
+              <div className={styles.field}>
+                <label>WhatsApp Number</label>
+                <input
+                  type="tel"
+                  value={leadWhatsapp}
+                  onChange={(e) => setLeadWhatsapp(e.target.value)}
+                  placeholder="+27 XX XXX XXXX"
+                />
+              </div>
+              <div className={styles.field}>
+                <label>Set a Password</label>
+                <input
+                  type="password"
+                  value={leadPassword}
+                  onChange={(e) => setLeadPassword(e.target.value)}
+                  placeholder="At least 6 characters"
+                />
+              </div>
+              <button className={styles.btnPrimary} style={{ width: '100%' }} disabled={leadBusy}>
+                {leadBusy ? 'Please wait...' : 'Read Free Preview →'}
+              </button>
+              <p style={{ textAlign: 'center', marginTop: 14, fontSize: 13, color: 'var(--muted)' }}>
+                Already registered?{' '}
+                <button
+                  type="button"
+                  onClick={() => { setGateMode('login'); setLeadErr(''); }}
+                  style={{ background: 'none', border: 'none', color: 'var(--gold)', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+                >
+                  Log in
+                </button>
+              </p>
+            </form>
+          )}
+
+          {gateMode === 'login' && (
+            <form onSubmit={submitLogin}>
+              <div className={styles.field}>
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  value={leadEmail}
+                  onChange={(e) => setLeadEmail(e.target.value)}
+                  placeholder="your@email.com"
+                />
+              </div>
+              <div className={styles.field}>
+                <label>Password</label>
+                <input
+                  type="password"
+                  value={leadPassword}
+                  onChange={(e) => setLeadPassword(e.target.value)}
+                  placeholder="Your password"
+                />
+              </div>
+              <button className={styles.btnPrimary} style={{ width: '100%' }} disabled={leadBusy}>
+                {leadBusy ? 'Please wait...' : 'Log In →'}
+              </button>
+              <p style={{ textAlign: 'center', marginTop: 14, fontSize: 13, color: 'var(--muted)' }}>
+                <button
+                  type="button"
+                  onClick={() => { setGateMode('forgot'); setLeadErr(''); setResetSent(false); }}
+                  style={{ background: 'none', border: 'none', color: 'var(--gold)', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+                >
+                  Forgot password?
+                </button>
+              </p>
+              <p style={{ textAlign: 'center', marginTop: 6, fontSize: 13, color: 'var(--muted)' }}>
+                New here?{' '}
+                <button
+                  type="button"
+                  onClick={() => { setGateMode('register'); setLeadErr(''); }}
+                  style={{ background: 'none', border: 'none', color: 'var(--gold)', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+                >
+                  Register for free
+                </button>
+              </p>
+            </form>
+          )}
+
+          {gateMode === 'forgot' && (
+            resetSent ? (
+              <div>
+                <p style={{ textAlign: 'center', fontFamily: "'Cormorant Garamond', serif", fontSize: 16, color: 'var(--cream-2)', lineHeight: 1.6, marginBottom: 20 }}>
+                  Check your email — we've sent a link to reset your password.
+                </p>
+                <button
+                  className={styles.btnOutline}
+                  style={{ width: '100%' }}
+                  onClick={() => { setGateMode('login'); setResetSent(false); }}
+                >
+                  Back to Log In
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={submitForgotPassword}>
+                <div className={styles.field}>
+                  <label>Email Address</label>
+                  <input
+                    type="email"
+                    value={leadEmail}
+                    onChange={(e) => setLeadEmail(e.target.value)}
+                    placeholder="your@email.com"
+                  />
+                </div>
+                <button className={styles.btnPrimary} style={{ width: '100%' }} disabled={leadBusy}>
+                  {leadBusy ? 'Please wait...' : 'Send Reset Link →'}
+                </button>
+                <p style={{ textAlign: 'center', marginTop: 14, fontSize: 13, color: 'var(--muted)' }}>
+                  <button
+                    type="button"
+                    onClick={() => { setGateMode('login'); setLeadErr(''); }}
+                    style={{ background: 'none', border: 'none', color: 'var(--gold)', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+                  >
+                    Back to Log In
+                  </button>
+                </p>
+              </form>
+            )
+          )}
         </div>
       </div>
 
