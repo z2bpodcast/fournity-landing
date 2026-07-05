@@ -201,10 +201,10 @@ export default function Home() {
       <section className={styles.hero}>
         <Image
           className={styles.heroLogo}
-          src="/fournity-logo.png"
+          src="/fournity-logo-typo-fixed.png"
           alt="FOURNITY Triquetra"
-          width={150}
-          height={101}
+          width={220}
+          height={220}
           priority
         />
         <Image
@@ -236,10 +236,10 @@ export default function Home() {
       <section className={styles.bookShowcase}>
         <Image
           className={styles.bookCoverImg}
-          src="/fournity-book-cover.jpg"
-          alt="FOURNITY — Trinity and I Are Four-nity, by Rev Mokoro Manana (book cover)"
-          width={1071}
-          height={1469}
+          src="/fournity-bookstand-display.png"
+          alt="FOURNITY book on display stand with logo plate, by Rev Mokoro Manana"
+          width={941}
+          height={1672}
         />
       </section>
 
