@@ -115,13 +115,16 @@ export default function Home() {
     }
 
     try {
-      await supabase.from('fournity_leads').insert({
-        full_name: leadName.trim(),
-        email: leadEmail.trim(),
-        whatsapp: leadWhatsapp.trim(),
-        source: 'landing_page',
-        referral_code: referralCode || null,
-      });
+      await supabase.from('fournity_leads').upsert(
+        {
+          full_name: leadName.trim(),
+          email: leadEmail.trim(),
+          whatsapp: leadWhatsapp.trim(),
+          source: 'landing_page',
+          referral_code: referralCode || null,
+        },
+        { onConflict: 'email' }
+      );
     } catch (err) {
       // Non-blocking: still let the reader through even if the insert fails
       console.error('Lead insert failed', err);
