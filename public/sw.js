@@ -1,11 +1,12 @@
 // FOURNITY Service Worker
 // Handles offline access and fast repeat loads.
 
-const CACHE_NAME = 'fournity-cache-v1';
+const CACHE_NAME = 'fournity-cache-v2';
 
 // Files we know about upfront — safe to cache immediately on install
 const PRECACHE_URLS = [
   '/',
+  '/read.html',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
@@ -53,7 +54,9 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
           return response;
         })
-        .catch(() => caches.match(request).then((res) => res || caches.match('/')))
+        .catch(() =>
+          caches.match(request, { ignoreSearch: true }).then((res) => res || caches.match('/'))
+        )
     );
     return;
   }

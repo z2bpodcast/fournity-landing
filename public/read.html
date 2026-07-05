@@ -522,6 +522,21 @@ footer { background:var(--deep); border-top:1px solid rgba(201,168,76,0.1); padd
 const SUPABASE_URL = 'https://udfjauogxptlkfrmdtsg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkZmphdW9neHB0bGtmcm1kdHNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4ODc1NTcsImV4cCI6MjA4NjQ2MzU1N30.yaAT5E_M6lb59RgaTq11144Nrm5UHX-zlSihER2JIvo';
 
+// ─── AUTHOR ACCESS ───
+// Anyone registering/logging in with an email on this list gets full access to every chapter, no payment required.
+const AUTHOR_EMAILS = ['blessedmokoro@gmail.com'];
+function hasFullAccess(ch) {
+  if (ch.free) return true;
+  const params = new URLSearchParams(window.location.search);
+  const currentEmail = (params.get('email') || '').toLowerCase();
+  if (currentEmail && AUTHOR_EMAILS.includes(currentEmail)) return true;
+  try {
+    const saved = JSON.parse(localStorage.getItem('fournity_registered') || '{}');
+    if (saved.email && AUTHOR_EMAILS.includes(saved.email.toLowerCase())) return true;
+  } catch (e) {}
+  return false;
+}
+
 // ─── DATA ───
 const identityLayers = [
   { letter:'I', word:'In Him We Live', chapters:'Chapters 1–5', desc:'Before Genesis, you were in the heart of God. The Pre-Adamic Union — your story began before time did.' },
@@ -3462,8 +3477,8 @@ function buildLayers() {
           <div class="ch-title">${ch.title}</div>
           <div class="ch-verse">${ch.verse}</div>
         </div>
-        <div class="badge ${ch.free?'badge-free':'badge-lock'}">${ch.free?'Read Free':'Full Book'}</div>`;
-      item.onclick = ch.free ? () => openReader(ch, li, ci) : () => openLockedChapter();
+        <div class="badge ${hasFullAccess(ch)?'badge-free':'badge-lock'}">${hasFullAccess(ch)?(ch.free?'Read Free':'Full Access'):'Full Book'}</div>`;
+      item.onclick = hasFullAccess(ch) ? () => openReader(ch, li, ci) : () => openLockedChapter();
       chs.appendChild(item);
     });
     block.appendChild(hdr);
@@ -3601,10 +3616,10 @@ function openDigDeeper() {
   layers.forEach((layer, li) => {
     html += `<h3 style="color:#E8C97A;font-family:'Cinzel',serif;font-size:15px;letter-spacing:1px;margin:28px 0 14px;border-bottom:1px solid rgba(201,168,76,0.18);padding-bottom:8px;">${layer.letter} — ${layer.word}</h3>`;
     layer.chapters.forEach((ch, ci) => {
-      html += `<div class="wb-q" style="cursor:pointer;" onclick="${ch.free ? `closeDigDeeperAndOpen(${li},${ci})` : `openLockedChapter()`}">`;
-      html += `<div class="wb-q-label">Chapter ${ch.num}${ch.free ? '' : ' 🔒'}</div>`;
+      html += `<div class="wb-q" style="cursor:pointer;" onclick="${hasFullAccess(ch) ? `closeDigDeeperAndOpen(${li},${ci})` : `openLockedChapter()`}">`;
+      html += `<div class="wb-q-label">Chapter ${ch.num}${hasFullAccess(ch) ? '' : ' 🔒'}</div>`;
       html += `<div class="wb-q-text" style="color:#F5F0E8;margin-bottom:6px;">${ch.title}</div>`;
-      if (ch.free) {
+      if (hasFullAccess(ch)) {
         const refs = (ch.verse || '').split('|').map(r => r.trim()).filter(Boolean);
         html += `<div style="display:flex;flex-wrap:wrap;gap:8px;">`;
         refs.forEach(r => {
