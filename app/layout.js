@@ -1,4 +1,5 @@
 import './globals.css';
+import RegisterSW from './RegisterSW';
 
 export const metadata = {
   title: 'FOURNITY — Trinity and I Are Four-nity',
@@ -10,6 +11,16 @@ export const metadata = {
       'An Illumination of the revelation of the Unity of Trinity and Humanity. 40 chapters. 8 layers. One identity.',
     type: 'website',
   },
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'FOURNITY',
+  },
+};
+
+export const viewport = {
+  themeColor: '#c9a84c',
 };
 
 export default function RootLayout({ children }) {
@@ -22,8 +33,13 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <RegisterSW />
+      </body>
     </html>
   );
 }
+
