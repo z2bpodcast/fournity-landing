@@ -555,17 +555,21 @@ async function checkPaidAccess() {
   const email = getCurrentEmail();
   if (!email) return;
   try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/fournity_orders?buyer_email=eq.${encodeURIComponent(email)}&payment_status=eq.paid&select=id&limit=1`,
-      {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-        },
-      }
-    );
-    const rows = await res.json();
-    if (Array.isArray(rows) && rows.length > 0) {
+    const [orderRes, grantRes] = await Promise.all([
+      fetch(
+        `${SUPABASE_URL}/rest/v1/fournity_orders?buyer_email=eq.${encodeURIComponent(email)}&payment_status=eq.paid&select=id&limit=1`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
+      ),
+      fetch(
+        `${SUPABASE_URL}/rest/v1/fournity_access_grants?email=eq.${encodeURIComponent(email)}&select=id&limit=1`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
+      ),
+    ]);
+    const orderRows = await orderRes.json();
+    const grantRows = await grantRes.json();
+    const paid = Array.isArray(orderRows) && orderRows.length > 0;
+    const granted = Array.isArray(grantRows) && grantRows.length > 0;
+    if (paid || granted) {
       window.FOURNITY_PAID_ACCESS = true;
       buildLayers(); // re-render so unlocked badges/access reflect immediately
     }
