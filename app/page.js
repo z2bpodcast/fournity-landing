@@ -16,6 +16,26 @@ export default function Home() {
   // Referral tracking
   const [referralCode, setReferralCode] = useState('');
 
+  // Existing login session — so returning readers aren't asked to log in again
+  const [sessionChecked, setSessionChecked] = useState(false);
+  const [sessionEmail, setSessionEmail] = useState('');
+  const [sessionName, setSessionName] = useState('');
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data?.session?.user) {
+        setSessionEmail(data.session.user.email || '');
+        setSessionName(data.session.user.user_metadata?.full_name || '');
+      }
+      setSessionChecked(true);
+    });
+  }, []);
+
+  function goToBook() {
+    const handoff = new URLSearchParams({ name: sessionName, email: sessionEmail });
+    window.location.href = `${BOOK_URL}?${handoff.toString()}`;
+  }
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlRef = params.get('ref');
@@ -319,7 +339,10 @@ export default function Home() {
           Humanity — before Genesis 1:1, lost in Genesis 3, restored in Acts 2.
         </p>
         <div className={styles.heroBtns}>
-          <button className={styles.btnPrimary} onClick={() => setGateOpen(true)}>
+          <button
+            className={styles.btnPrimary}
+            onClick={() => (sessionEmail ? goToBook() : setGateOpen(true))}
+          >
             Read Free Chapters
           </button>
           <button className={styles.btnOutline} onClick={openOrder}>
