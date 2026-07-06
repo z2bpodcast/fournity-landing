@@ -538,15 +538,47 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // ─── AUTHOR ACCESS ───
 // Anyone registering/logging in with an email on this list gets full access to every chapter, no payment required.
 const AUTHOR_EMAILS = ['blessedmokoro@gmail.com'];
-function hasFullAccess(ch) {
-  if (ch.free) return true;
+
+// ─── PAID ACCESS ───
+// Checked against real completed orders in Supabase — this is what actually unlocks the book for paying readers.
+window.FOURNITY_PAID_ACCESS = false;
+function getCurrentEmail() {
   const params = new URLSearchParams(window.location.search);
-  const currentEmail = (params.get('email') || '').toLowerCase();
-  if (currentEmail && AUTHOR_EMAILS.includes(currentEmail)) return true;
+  const fromUrl = (params.get('email') || '').toLowerCase().trim();
+  if (fromUrl) return fromUrl;
   try {
     const saved = JSON.parse(localStorage.getItem('fournity_registered') || '{}');
-    if (saved.email && AUTHOR_EMAILS.includes(saved.email.toLowerCase())) return true;
-  } catch (e) {}
+    return (saved.email || '').toLowerCase().trim();
+  } catch (e) { return ''; }
+}
+async function checkPaidAccess() {
+  const email = getCurrentEmail();
+  if (!email) return;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/fournity_orders?buyer_email=eq.${encodeURIComponent(email)}&payment_status=eq.paid&select=id&limit=1`,
+      {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        },
+      }
+    );
+    const rows = await res.json();
+    if (Array.isArray(rows) && rows.length > 0) {
+      window.FOURNITY_PAID_ACCESS = true;
+      buildLayers(); // re-render so unlocked badges/access reflect immediately
+    }
+  } catch (e) {
+    // Fails silently — reader simply sees locked chapters as normal if the check can't complete
+  }
+}
+
+function hasFullAccess(ch) {
+  if (ch.free) return true;
+  if (window.FOURNITY_PAID_ACCESS) return true;
+  const currentEmail = getCurrentEmail();
+  if (currentEmail && AUTHOR_EMAILS.includes(currentEmail)) return true;
   return false;
 }
 
@@ -3414,6 +3446,7 @@ function buildIdentity() {
 // ─── LAYERS ───
 function buildLayers() {
   const wrap = document.getElementById('layersWrap');
+  wrap.innerHTML = '';
 
   // Introduction card
   const introItem = document.createElement('div');
@@ -3917,6 +3950,7 @@ window.onload = function() {
   buildLayers();
   checkReturning();
   updateProgressDisplay();
+  checkPaidAccess();
   window.speechSynthesis.getVoices();
 };
 </script>
