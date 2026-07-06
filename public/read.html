@@ -400,7 +400,13 @@ footer { background:var(--deep); border-top:1px solid rgba(201,168,76,0.1); padd
     <div class="section-heading">Read the Book</div>
     <p style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--muted);margin-bottom:4px;font-style:italic;">One Illumination of the Revelation of Jesus Christ — across eight layers of IDENTITY.</p>
     <p style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--muted);margin-bottom:12px;">First chapter of every layer is free. Click to read, listen and study.</p>
-    <p style="text-align:center;font-family:'Inter',sans-serif;font-size:12px;color:var(--gold-dark);letter-spacing:0.5px;margin-bottom:32px;">📖 Every chapter — free or unlocked — is the complete chapter: full narrative, scriptures, Illumination, Light Up Moment, Declaration and Dig Deeper. Nothing is shortened.</p>
+    <p style="text-align:center;font-family:'Inter',sans-serif;font-size:12px;color:var(--gold-dark);letter-spacing:0.5px;margin-bottom:20px;">📖 Every chapter — free or unlocked — is the complete chapter: full narrative, scriptures, Illumination, Light Up Moment, Declaration and Dig Deeper. Nothing is shortened.</p>
+    <div style="max-width:320px;margin:0 auto 32px;">
+      <div style="height:6px;background:rgba(201,168,76,0.12);border-radius:3px;overflow:hidden;">
+        <div id="readProgressBar" style="height:100%;width:0%;background:linear-gradient(135deg,#C9A84C,#8B6914);transition:width 0.4s ease;"></div>
+      </div>
+      <div id="readProgressText" style="text-align:center;font-size:11px;color:var(--muted);letter-spacing:0.5px;margin-top:8px;">0 / 40 chapters read</div>
+    </div>
     <div class="layers-wrap" id="layersWrap"></div>
   </div>
 </section>
@@ -3484,7 +3490,7 @@ function buildLayers() {
           <div class="ch-title">${ch.title}</div>
           <div class="ch-verse">${ch.verse}</div>
         </div>
-        <div class="badge ${hasFullAccess(ch)?'badge-free':'badge-lock'}">${hasFullAccess(ch)?(ch.free?'Read Free':'Full Access'):'Full Book'}</div>`;
+        <div class="badge ${hasFullAccess(ch)?'badge-free':'badge-lock'}">${isChapterRead(ch.num) ? '✓ Read' : (hasFullAccess(ch)?(ch.free?'Read Free':'Full Access'):'Full Book')}</div>`;
       item.onclick = hasFullAccess(ch) ? () => openReader(ch, li, ci) : () => openLockedChapter();
       chs.appendChild(item);
     });
@@ -3514,16 +3520,75 @@ function buildLayers() {
 }
 
 // ─── READER ───
+// ─── READING PROGRESS ───
+function getReadChapters() {
+  try { return JSON.parse(localStorage.getItem('fournity_read_chapters') || '[]'); }
+  catch (e) { return []; }
+}
+function isChapterRead(num) {
+  return getReadChapters().includes(num);
+}
+function markChapterRead(num) {
+  const read = getReadChapters();
+  if (!read.includes(num)) {
+    read.push(num);
+    localStorage.setItem('fournity_read_chapters', JSON.stringify(read));
+    updateProgressDisplay();
+  }
+}
+function updateProgressDisplay() {
+  const readCount = getReadChapters().length;
+  const el = document.getElementById('readProgressText');
+  const bar = document.getElementById('readProgressBar');
+  if (el) el.textContent = `${readCount} / 40 chapters read`;
+  if (bar) bar.style.width = (readCount / 40 * 100) + '%';
+}
+
+// ─── NOTE BOX (simple, standalone — appears under every chapter) ───
+function renderNoteBox(key) {
+  const saved = localStorage.getItem(notesKey(key)) || '';
+  return `
+    <div style="margin-top:36px;padding:22px;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;">
+      <div style="font-family:'Cinzel',serif;font-size:14px;color:#E8C97A;letter-spacing:0.5px;margin-bottom:6px;">📝 Your Note on This Chapter</div>
+      <div style="font-size:12px;color:#9A9AAA;margin-bottom:12px;">Tap below and write freely — saves automatically as you type.</div>
+      <textarea class="wb-textarea" id="quickNote-${key}" placeholder="What stood out to you in this chapter?" oninput="saveQuickNote('${key}')" style="min-height:120px;font-size:16px;">${saved}</textarea>
+      <div class="wb-save-status" id="quickNoteStatus-${key}" style="font-size:11px;color:#C9A84C;margin-top:8px;letter-spacing:1px;min-height:14px;"></div>
+    </div>`;
+}
+let quickNoteTimers = {};
+function saveQuickNote(key) {
+  const ta = document.getElementById('quickNote-' + key);
+  const status = document.getElementById('quickNoteStatus-' + key);
+  clearTimeout(quickNoteTimers[key]);
+  status.textContent = 'Saving...';
+  quickNoteTimers[key] = setTimeout(() => {
+    localStorage.setItem(notesKey(key), ta.value);
+    status.textContent = '✓ Saved on this device';
+  }, 500);
+}
+
 function openReader(ch, li, ci) {
   document.getElementById('rCh').textContent = `Layer ${layers[li].num} · Chapter ${ch.num} of 40`;
   document.getElementById('rTitle').textContent = ch.title;
-  document.getElementById('rBody').innerHTML = ch.body || '<p>Content loading...</p>';
+  document.getElementById('rBody').innerHTML = (ch.body || '<p>Content loading...</p>') + renderNoteBox(ch.num);
   currentText = document.getElementById('rBody').innerText;
   stopAudio();
   document.getElementById('audioFill').style.width = '0%';
   document.getElementById('audioStatus').textContent = 'Ready';
   document.getElementById('readerOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // Mark as read after a short while reading, or immediately if they scroll near the bottom
+  clearTimeout(window._readTimer);
+  window._readTimer = setTimeout(() => markChapterRead(ch.num), 45000);
+  const rOverlay = document.getElementById('readerOverlay');
+  const scrollHandler = () => {
+    if (rOverlay.scrollTop + rOverlay.clientHeight >= rOverlay.scrollHeight - 300) {
+      markChapterRead(ch.num);
+      rOverlay.removeEventListener('scroll', scrollHandler);
+    }
+  };
+  rOverlay.addEventListener('scroll', scrollHandler);
 }
 function closeReader() {
   document.getElementById('readerOverlay').classList.remove('open');
@@ -3533,7 +3598,7 @@ function closeReader() {
 function openConclusion() {
   document.getElementById('rCh').textContent = `Conclusion`;
   document.getElementById('rTitle').textContent = 'Welcome Home';
-  document.getElementById('rBody').innerHTML = conclusionBody;
+  document.getElementById('rBody').innerHTML = conclusionBody + renderNoteBox('conclusion');
   currentText = document.getElementById('rBody').innerText;
   stopAudio();
   document.getElementById('audioFill').style.width = '0%';
@@ -3544,7 +3609,7 @@ function openConclusion() {
 function openIntroduction() {
   document.getElementById('rCh').textContent = `Introduction`;
   document.getElementById('rTitle').textContent = 'Before You Begin — Know the God You Are United With';
-  document.getElementById('rBody').innerHTML = introBody;
+  document.getElementById('rBody').innerHTML = introBody + renderNoteBox('intro');
   currentText = document.getElementById('rBody').innerText;
   stopAudio();
   document.getElementById('audioFill').style.width = '0%';
@@ -3571,6 +3636,23 @@ function notesKey(num) { return 'fournity_note_ch' + num; }
 function openWorkbook(li, ci) {
   const ch = layers[li].chapters[ci];
   if (!ch.workbook) return;
+
+  if (!isChapterRead(ch.num)) {
+    document.getElementById('wbTitle').textContent = ch.workbook.title;
+    document.getElementById('wbBody').innerHTML = `
+      <div style="text-align:center;padding:30px 10px;">
+        <div style="font-size:40px;margin-bottom:16px;">📖</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#F5F0E8;line-height:1.6;margin-bottom:20px;">
+          Finish reading <strong style="color:#E8C97A;">Chapter ${ch.num}</strong> first — its workbook unlocks once you've read the chapter.
+        </div>
+        <button class="workbook-btn" onclick="document.getElementById('wbOverlay').classList.remove('open'); openReader(layers[${li}].chapters[${ci}], ${li}, ${ci});">
+          Continue Reading Chapter ${ch.num}
+        </button>
+      </div>`;
+    document.getElementById('wbOverlay').classList.add('open');
+    return;
+  }
+
   const wb = ch.workbook;
   document.getElementById('wbTitle').textContent = wb.title;
   let html = `<h3>${ch.title}</h3>`;
@@ -3834,6 +3916,7 @@ window.onload = function() {
   buildIdentity();
   buildLayers();
   checkReturning();
+  updateProgressDisplay();
   window.speechSynthesis.getVoices();
 };
 </script>
