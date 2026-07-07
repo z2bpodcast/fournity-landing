@@ -635,7 +635,7 @@ const layers = [
             { type:'fill', label:'Fill in the Blank', q:'Complete this statement from Chapter 1: "Before Genesis chapter one was — ___________." What does this mean to you personally?', modelAnswer:'Before Genesis chapter one was — YOU.' },
             { type:'tf', label:'True or False', q:'The earth was created first and humanity was fitted into it afterward.', answer:false, explain:'Ephesians 1:4 shows God chose us BEFORE the foundation of the world — humanity was the reason for creation, not an addition to it.' },
             { type:'words', label:'In Your Own Words', q:'Chapter 1 says you did not begin at your birth. In your own words, explain what it means that God chose you before the foundation of the world — and how that changes the way you see your own beginning.' },
-            { type:'decl', label:'Declaration Prompt', q:'Complete this sentence and speak it aloud three times: "I did not begin at my birth. I began in _________, before _________, because God already _________ me."' }
+            { type:'decl', label:'Declaration Prompt', q:'Complete this sentence and speak it aloud three times: "I did not begin at my birth. I began in _________, before _________, because God already _________ me."', modelAnswer:'I did not begin at my birth. I began in ETERNITY, before the FOUNDATION OF THE WORLD, because God already CHOSE me.' }
           ]}
       },
       { num:2, title:'The Eternal Family That Wanted To Expand', verse:'John 17:21 | Ephesians 1:5 | 1 Peter 2:9', free:false,
@@ -1906,7 +1906,7 @@ const layers = [
             { type:'fill', label:'Fill in the Blank', q:'Complete the three movements of Ephesians 2:5-6: Even when we were dead — God _______ us together with Christ; God _______ us up with Him; God _______ us with Him in heavenly places.', modelAnswer:'Ephesians 2:5-6 — God MADE US ALIVE together with Christ; God RAISED us up with Him; God SEATED us with Him in heavenly places.' },
             { type:'tf', label:'True or False', q:'"But God" was initiated because God saw human potential worth investing in.', answer:false, explain:'Ephesians 2:4 says it was entirely because of who God IS — rich in mercy, great in love — not because of anything in us.' },
             { type:'words', label:'In Your Own Words', q:'Joseph said "you meant evil against me, but God meant it for good." Connect this to Ephesians 2:4. Apply it to your own story — where has the enemy meant evil that God is meaning for good in your life?' },
-            { type:'decl', label:'Declaration Prompt', q:'Speak over every area of darkness: "I was _______. But God — rich in _______, great in _______ — interrupted the sentence. He made me _______. He raised me _______. He seated me _______ in heavenly places. But God is enough."' }
+            { type:'decl', label:'Declaration Prompt', q:'Speak over every area of darkness: "I was _______. But God — rich in _______, great in _______ — interrupted the sentence. He made me _______. He raised me _______. He seated me _______ in heavenly places. But God is enough."', modelAnswer:'I was DEAD. But God — rich in MERCY, great in LOVE — interrupted the sentence. He made me ALIVE. He raised me UP. He seated me WITH CHRIST in heavenly places. But God is enough.' }
           ]}
       },
       { num:22, title:'The Throne Room Is Your Address', verse:'Ephesians 2:6 | Hebrews 4:16 | Revelation 4:1', free:false,
@@ -3916,7 +3916,7 @@ function openWorkbook(li, ci) {
     } else if (q.type === 'fill' || q.type === 'words' || q.type === 'decl') {
       html += `<textarea class="wb-textarea" id="wbTextarea-${ch.num}-${qi}" placeholder="Write your answer here..." oninput="saveWbAnswer(${ch.num},${qi})"></textarea>`;
       html += `<div class="wb-save-status" id="wbSaveStatus-${ch.num}-${qi}" style="font-size:11px;color:#C9A84C;margin-top:6px;letter-spacing:1px;min-height:14px;"></div>`;
-      if (q.type === 'fill' && q.modelAnswer) {
+      if ((q.type === 'fill' || q.type === 'decl') && q.modelAnswer) {
         html += `<button type="button" class="workbook-btn" style="margin-top:10px;padding:8px 14px;font-size:12px;" onclick="revealModelAnswer(${ch.num},${qi})">👁️ Reveal Model Answer</button>`;
         html += `<div id="modelAnswer-${ch.num}-${qi}" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(37,211,102,0.08);border:1px solid rgba(37,211,102,0.25);border-radius:4px;font-size:14px;color:#F5F0E8;line-height:1.6;">${q.modelAnswer}</div>`;
       }
