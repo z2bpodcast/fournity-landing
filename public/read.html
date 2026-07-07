@@ -3910,8 +3910,8 @@ function openWorkbook(li, ci) {
       html += `</div><div class="wb-feedback" id="fb-${qi}"></div>`;
     } else if (q.type === 'tf') {
       html += `<div class="wb-tf">
-        <button class="wb-tf-btn" id="tf-${qi}-t" onclick="selectTF(${qi},true,${q.answer},${JSON.stringify(q.explain||'')})">True</button>
-        <button class="wb-tf-btn" id="tf-${qi}-f" onclick="selectTF(${qi},false,${q.answer},${JSON.stringify(q.explain||'')})">False</button>
+        <button class="wb-tf-btn" id="tf-${qi}-t" onclick="selectTF(${qi},true,${q.answer},${JSON.stringify(q.explain||'').replace(/"/g,'&quot;')})">True</button>
+        <button class="wb-tf-btn" id="tf-${qi}-f" onclick="selectTF(${qi},false,${q.answer},${JSON.stringify(q.explain||'').replace(/"/g,'&quot;')})">False</button>
       </div><div class="wb-feedback" id="fb-${qi}"></div>`;
     } else if (q.type === 'fill' || q.type === 'words' || q.type === 'decl') {
       html += `<textarea class="wb-textarea" id="wbTextarea-${ch.num}-${qi}" placeholder="Write your answer here..." oninput="saveWbAnswer(${ch.num},${qi})"></textarea>`;
