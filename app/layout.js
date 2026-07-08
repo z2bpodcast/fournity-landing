@@ -2,11 +2,11 @@ import './globals.css';
 import RegisterSW from './RegisterSW';
 
 export const metadata = {
-  title: 'FOURNITY — Trinity and I Are Four-nity',
+  title: 'FOURNITY — Celebrating our Union with God in Christ Jesus',
   description:
     'An Illumination of the revelation of the Unity of Trinity and Humanity — before Genesis 1:1, lost in Genesis 3, restored in Acts 2. By Rev Mokoro Manana.',
   openGraph: {
-    title: 'FOURNITY — Trinity and I Are Four-nity',
+    title: 'FOURNITY — Celebrating our Union with God in Christ Jesus',
     description:
       'An Illumination of the revelation of the Unity of Trinity and Humanity. 40 chapters. 8 layers. One identity.',
     type: 'website',
@@ -42,4 +42,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-

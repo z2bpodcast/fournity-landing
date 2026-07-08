@@ -328,7 +328,7 @@ export default function Home() {
         <Image
           className={styles.heroBanner}
           src="/fournity-banner.jpg"
-          alt="FOURNITY — Trinity and I Are Four-nity"
+          alt="FOURNITY — Celebrating our Union with God in Christ Jesus"
           width={900}
           height={286}
           priority
