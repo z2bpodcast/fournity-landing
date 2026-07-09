@@ -180,6 +180,29 @@ body { background:var(--deep); color:var(--cream); font-family:'Inter',sans-seri
 .audio-continuous-btn.active { color:var(--gold-light); opacity:1; background:rgba(201,168,76,0.3); box-shadow:0 0 0 1px var(--gold); }
 .tts-word-active { background:rgba(201,168,76,0.35); border-radius:3px; box-shadow:0 0 0 2px rgba(201,168,76,0.35); transition:background 0.15s; }
 .tts-sentence-active { background:rgba(201,168,76,0.16); border-radius:4px; transition:background 0.2s; }
+
+/* ─── LAYER BRIDGE / OVERVIEW ─── */
+.bridge-cta { margin-top:28px; padding:24px; border-radius:8px; text-align:center; cursor:pointer; transition:all 0.25s; background:linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.05)); border:1px solid rgba(201,168,76,0.45); box-shadow:0 0 24px rgba(201,168,76,0.15); }
+.bridge-cta:hover { transform:translateY(-2px); box-shadow:0 4px 32px rgba(201,168,76,0.3); border-color:rgba(201,168,76,0.7); }
+.bridge-cta-label { font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); opacity:0.9; margin-bottom:8px; }
+.bridge-cta-title { font-family:'Cinzel',serif; font-size:18px; font-weight:700; color:var(--gold-light); text-shadow:0 0 16px rgba(201,168,76,0.4); }
+.bridge-hdr { padding:28px 32px 20px; border-bottom:1px solid rgba(255,255,255,0.08); background:linear-gradient(135deg, rgba(201,168,76,0.14), transparent); border-left:3px solid var(--gold); }
+.bridge-hdr-letter { font-family:'Cinzel',serif; font-size:42px; font-weight:900; line-height:1; margin-bottom:10px; background:linear-gradient(135deg,var(--gold-light),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.bridge-hdr-tag { font-family:'Inter',sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--gold-light); opacity:0.85; margin-bottom:8px; }
+.bridge-hdr-title { font-family:'Cinzel',serif; font-size:22px; font-weight:700; color:var(--cream); margin-bottom:6px; }
+.bridge-hdr-tagline { font-family:'Cormorant Garamond',serif; font-size:16px; font-style:italic; opacity:0.85; }
+.bridge-table { width:100%; border-collapse:collapse; margin:18px 0; font-family:'Inter',sans-serif; font-size:13px; }
+.bridge-table th { text-align:left; padding:8px 10px; border-bottom:2px solid rgba(201,168,76,0.35); color:var(--gold-light); font-weight:700; }
+.bridge-table td { padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.08); color:var(--cream-2); }
+.bridge-begin-btn { display:block; width:100%; margin-top:32px; padding:16px; border:none; border-radius:8px; font-family:'Cinzel',serif; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer; color:#0A0A0F; background:linear-gradient(135deg,var(--gold-light),var(--gold)); box-shadow:0 4px 20px rgba(201,168,76,0.3); transition:box-shadow 0.2s; }
+.bridge-begin-btn:hover { box-shadow:0 6px 28px rgba(201,168,76,0.5); }
+.layer-bridge-link { margin-top:10px; padding:10px 16px; border-radius:20px; font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.5px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(201,168,76,0.5); color:var(--gold-light); background:rgba(201,168,76,0.12); transition:background 0.2s; }
+.layer-bridge-link:hover { background:rgba(201,168,76,0.22); }
+.reader-nav-bar { position:fixed; bottom:0; left:0; right:0; max-width:740px; margin:0 auto; background:var(--deep-2); border-top:1px solid rgba(201,168,76,0.25); padding:12px 20px; display:none; justify-content:space-between; align-items:center; z-index:1001; }
+.reader-overlay.open .reader-nav-bar { display:flex; }
+.reader-nav-btn { background:rgba(201,168,76,0.12); border:1px solid rgba(201,168,76,0.35); color:var(--gold-light); border-radius:20px; padding:11px 20px; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; }
+.reader-nav-btn:hover { background:rgba(201,168,76,0.24); }
+.reader-nav-btn.nav-disabled { opacity:0.3; pointer-events:none; }
 .audio-info { flex:1; }
 .audio-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
 .audio-bar { height:4px; background:rgba(201,168,76,0.15); border-radius:2px; overflow:hidden; }
@@ -474,6 +497,11 @@ footer { background:var(--deep); border-top:1px solid rgba(201,168,76,0.1); padd
       <button class="audio-continuous-btn" id="continuousBtn" onclick="toggleContinuous()" title="Continuous play — auto-advance to next chapter">🔁</button>
     </div>
     <div class="reader-body" id="rBody"></div>
+    <div style="height:64px;"></div>
+  </div>
+  <div class="reader-nav-bar" id="readerNavBar">
+    <button class="reader-nav-btn reader-nav-prev" id="navPrevBtn" onclick="navigatePrev()">‹ Previous</button>
+    <button class="reader-nav-btn reader-nav-next" id="navNextBtn" onclick="navigateNext()">Next ›</button>
   </div>
 </div>
 
@@ -778,7 +806,7 @@ const layers = [
 <h3 class="celebration-heading">The Celebration — Layer One Concluded</h3>
 <p>We have spent five chapters in the first Illumination Layer of this book, and we have not yet arrived at Genesis 1:1. We have not yet begun the creation story. We have not yet touched the garden, the serpent, the cross or the empty tomb. And that is intentional. Because everything that happens in the rest of this book — every layer of revelation that follows — is built on the foundation we have laid in these five chapters: Chapter 1                                        Before creation — you were chosen Chapter 2                                        Before creation — you were family Chapter 3                                        Before creation — you were known Chapter 4                                        Before creation — you were glorified Chapter 5                                        Before creation — Fournity was always the plan The enemy cannot reach back to eternity and undo what God decided there. He cannot erase your name from the book that was written before the world began. He cannot strip you of a glory that was given to you before creation had a first day. He cannot remove you from a family that adopted you before time had a first moment. Your identity does not begin with what happened to you. It begins with what God decided about you — before the world was made, in the eternal counsel of a Trinity that was always counting to four. And the Triquetra — that ancient symbol carried by the descendants of Noah across the centuries of human history, adopted by the early Church, misunderstood by many, ignored by most — has been quietly telling this story all along. Three interlocking arcs. One unending knot. And in the centre — You. Father. Son. Holy Spirit. You. The number God was always counting to. Fournity.</p></div>
 <div class="lightup-box"><div class="lightup-label">🔦 Light Up Moment</div><p> The Triquetra was drawn by people who predated the New Testament — descendants of Noah, through Japheth, through Gomer, carrying in their art a truth their spirits sensed but their theology could not yet fully name. The centre arc was always there. It was always waiting for the full revelation of what it meant. That revelation has a name: Fournity.</p></div>
-<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this as the closing declaration of Layer One: "I am the centre arc. Not equal to the Three — but included by the Three. Not the Creator — but created in His image and invited into His eternal Union. I am a partaker of the divine nature. I am a child of God, an heir of God, a fellow heir with Christ. Father, Son, Holy Spirit — and me. Four. Complete. The number God was always counting to. This is my identity. This is Fournity. And it was always the plan." Chapter 5 of 40 | Illumination Layer 1: I — In Him We Live, Move and Have Our Being End of Illumination Layer 1 ILLUMINATION LAYER 2 D — Divine Power, Divine Nature (2 Peter 1:2-4) Layer 2 Introduction Designed in His Divine Power and Divine Nature Welcome to Fournity — Layer 2. In Layer 1 we received a powerful illumination. We discovered that we were created in the image and likeness of God in Christ — before the foundation of the world. The two operative words of Layer 1 were these: In Christ. And before the foundation. If you moved through Layer 1 quickly — if those two phrases did not yet stop you, shake you and reshape how you see yourself — I want to gently invite you to go back. Read Layer 1 again before you continue. Because everything we are about to celebrate in Layer 2 is built on that foundation. You cannot fully receive what God has given you through His divine power until you first know who you were in Christ before creation began. Now — with that foundation firmly beneath our feet — take out your Bible. Turn with me to 2 Peter 1:2-4. Read it slowly. Do not rush. "Grace and peace be multiplied unto you through the knowledge of God, and of Jesus our Lord. According as His divine power hath given unto us all things that pertain unto life and godliness, through the knowledge of Him that hath called us to glory and virtue. Whereby are given unto us exceeding great and precious promises: that by these ye might be partakers of the divine nature, having escaped the corruption that is in the world through lust." — 2 Peter 1:2-4 If you have a pen or a highlighter in your hand, I want you to mark five specific words as I call them out — because these five words are the five stones of Layer 2. Stone 1 — GIVEN (found in verses 3 and 4) Stone 2 — KNOWLEDGE (found in verses 2 and 3) Stone 3 — DIVINE POWER (found in verse 3) Stone 4 — DIVINE NATURE (found in verse 4) Stone 5 — PARTAKERS (found in verse 4) When young David went out to face Goliath, he stopped at a stream and selected five smooth stones. He placed them in his shepherd's bag. He only used one — but he carried five. Why five? Because five is the number of grace in Scripture. And David knew that against a giant, you come prepared — not in your own strength, but in the grace of God. "He took his staff in his hand, chose five smooth stones from the stream, put them in the pouch of his shepherd's bag and, with his sling in his hand, approached the Philistine." (1 Samuel 17:40) Dear reader — I am asking you to do the same. Pick up these five stones from the stream of 2 Peter 1:2-4. Put them in your Fournity bag. Because the Goliaths of identity confusion, purposelessness, shame and spiritual ignorance have been standing in your valley for too long. And it is time to bring them down. The Number Five and The Apostle Peter We taught in the last chapter of Layer 1 that numbers are significant in God's economy. Five is the number of grace. And it is no accident that the Apostle Peter gives us five power-words in three verses — because everything Peter is about to celebrate is a product of grace. Grace. And peace. Multiplied. I want to pause on that word — multiplied. The Apostle Peter was a businessman before he was an apostle. He was a fisherman — which in his day was not a casual hobby but a commercial enterprise. He understood nets, weights, quantities, markets and profit margins. He was a man who thought in numbers. And when a man who thinks in numbers chooses the word multiplied — he means it precisely. Not added. Not increased. Multiplied. Addition says: you had two, now you have four. Multiplication says: you had two, now you have two hundred. But Peter goes further than simple multiplication. The grace and peace he is describing operates exponentially — growing not in a straight line but in a compounding curve that accelerates with every increment of knowledge. Each revelation builds on the last. Each illumination multiplies what was already there. The more you know Christ, the more grace multiplies. The more grace multiplies, the more peace compounds. And the more peace compounds, the more your life begins to look like what God designed it to look like before the foundation of the world. Exponential grace. Exponential peace. Through the knowledge of Christ. This is what we are celebrating in Layer 2. The Four Dimensions of the Divinity of God Before we open our five chapters, I want to give you a framework that will carry us through this entire layer — and indeed through the rest of this book. I call it The Four Dimensions of the Divinity of God. These four dimensions are not four separate compartments of God. They are four lenses through which we understand the One God — His being, His character, His identity and His activity. And as we will celebrate in Chapters 8, 9 and 10, the most breathtaking truth of 2 Peter 1:4 is that through the exceeding great and precious promises, we have been made partakers of all four. Dimension 1 — The Essence of God Question: What is God? Essence refers to God's being, nature and substance — what God is in His innermost reality. "God is Spirit." (John 4:24) "God is light." (1 John 1:5) "God is love." (1 John 4:8) Essence answers the question of Being. Dimension 2 — The Attributes of God Question: What is God like? Attributes describe the qualities, characteristics and perfections that flow from God's essence — how God's nature expresses itself. God is holy. God is just. God is merciful. God is faithful. God is omniscient — all-knowing. God is omnipotent — all-powerful. God is omnipresent — present everywhere. God is immutable — unchanging. Attributes answer the question of Character. Dimension 3 — The Deity of God Question: Who is God? Deity speaks of God's identity and personhood — not three gods, but one God revealed personally. "Go therefore and make disciples of all nations, baptizing them in the name of the Father and of the Son and of the Holy Spirit." (Matthew 28:19) Deity answers the question of Identity. Dimension 4 — The Economy of God Question: What does God do? Economy speaks of God's activity — His works in creation, redemption and governance. He creates. He redeems. He sustains. He reconciles. He glorifies. Economy answers the question of Activity. Put together, the framework looks like this: Dimension                 Question                 Focus                   Scripture Essence                   What is God?             God's Being             God is Spirit, Light, Love Attributes                What is God like?        God's Character         Holy, Just, Merciful, Omnipotent Deity                     Who is God?              God's Identity          Father, Son, Holy Spirit Economy                   What does God do?        God's Activity          Creates, Redeems, Reconciles, Glorifies Or poetically: What is God? He is Spirit, Light and Love. What is God like? He is holy, faithful, just and merciful. Who is God? He is the Father, revealed through the Son, known by the Holy Spirit. What does God do? He creates, redeems, sustains, reconciles and glorifies. Now here is why this framework is essential for Layer 2. When Peter says we are "partakers of the divine nature" in 2 Peter 1:4 — he is not being vague. He is making the most audacious claim in the entire New Testament about the human being. He is saying that through the exceeding great and precious promises — accessed through knowledge, powered by divine power — we participate in all four dimensions. We will explore this in full in Chapters 8, 9 and 10. But first — a word of caution. A Word of Caution Before We Begin Reading this book without processing it until it transforms you will make your head puffed up. I know this from personal experience. My wife, Prophetess Ntswaki Manana — the Hephzibah — said something over breakfast recently as we were discussing this very manuscript. I must crystallise it here because it belongs in this book: "It is not enough for us to read the Word of God. We must become the Word of God." — Prophetess Ntswaki Manana, The Hephzibah I sat at the feet of my original pastor, Pastor Reuben Phiri, for six solid years before he released me to Rhema Bible College. I followed him home after his thirty-minute Sunday messages because I needed more. I can still visualise his house — the maroon carpet, me sitting on the floor, notebook in hand. He would teach me until he fell asleep on the sofa. I would shake his knee gently to wake him — until Mamoruti Angela called from the bedroom: "Honey, come sleep!" I graduated from Rhema Bible College with a diploma and a head full of information. And I had not yet turned my world upside down. Why? Because information without transformation is just data that has not completed the journey. The route from Egypt to the Promised Land was a forty-day journey. It took Israel forty years. Hebrews 3:19 tells us why: "So we see that they could not enter in because of unbelief." — Hebrews 3:19 They had information in abundance. But they did not allow that information to travel the full distance from data to transformation. And so they died in the wilderness with the Promised Land still on the horizon. FOURNITY is not a new revelation. It is an Illumination of what the body of Christ already has. There is no shortage of revelation in the Church. The problem is that we are always in a hurry — always reaching for the next revelation — without being transformed by the ones we already possess. When a room is dark, you cannot appreciate its furniture or make use of any of its equipment. You can die of hunger in a dark room that is full of food — simply because you cannot see it. Reading FOURNITY is about turning on the light. The Illumination Pathway Before we open our five chapters, I want to give you the most important process map in this book. I call it The Illumination Pathway. It is the journey that every truth must travel if it is going to move from the page into your life. There are seven stages: 1. DATA Raw facts. The word you heard. The verse you read. 2. INFORMATION Data organised and given context. You understand what the facts mean. 3. KNOWLEDGE (Know + Ledger) Information processed and recorded in your inner account. You do not just know about something — you know it. Intimately. Personally. Transformatively. 4. UNDERSTANDING Standing under the knowledge you have received — allowing its full weight to rest upon you and reshape your inner world. 5. WISDOM The application of knowledge that has produced understanding. You do not just know it — you live it. You govern from it. 6. PRAISE The natural response of a life transformed by wisdom. You cannot help but celebrate what God has done. 7. WORSHIP The destination of the entire journey. Not an activity performed on Sunday morning — but a life so thoroughly transformed that every breath, every decision, every act of governing becomes an act of worship. Data → Information → Knowledge → Understanding → Wisdom → Praise → Worship This is The Illumination Pathway. And 2 Peter 1:2-4 is the most concentrated description of this pathway in the entire New Testament. Now — pick up your five stones. Let us begin. Introduction to Illumination Layer 2 | D — Divine Power, Divine Nature</p></div>
+<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this as the closing declaration of Layer One: "I am the centre arc. Not equal to the Three — but included by the Three. Not the Creator — but created in His image and invited into His eternal Union. I am a partaker of the divine nature. I am a child of God, an heir of God, a fellow heir with Christ. Father, Son, Holy Spirit — and me. Four. Complete. The number God was always counting to. This is my identity. This is Fournity. And it was always the plan." Chapter 5 of 40 | Illumination Layer 1: I — In Him We Live, Move and Have Our Being</p></div>
 <button class="workbook-btn" onclick="openWorkbook(0,4)">📖 Open Chapter 5 Workbook</button>`,
         workbook:{ title:'Chapter 5 Workbook — Fournity: The Number God Was Always Counting To',
           questions:[
@@ -794,6 +822,63 @@ const layers = [
   },
   {
     num:2, letter:'D', word:'Designed in His Image', subtitle:'2 Peter 1:2-4 — Partakers of the Divine Nature',
+    bridgeSubtitle:'Designed in His Divine Power and Divine Nature',
+    bridgeTagline:'',
+    bridgeScripture:'2 Peter 1:2-4',
+    bridgeIntro:`<p class="drop-cap-p">Welcome to Fournity — Layer 2. In Layer 1 we received a powerful illumination. We discovered that we were created in the image and likeness of God in Christ — before the foundation of the world. The two operative words of Layer 1 were these: In Christ. And before the foundation.</p>
+<p>If you moved through Layer 1 quickly — if those two phrases did not yet stop you, shake you and reshape how you see yourself — I want to gently invite you to go back. Read Layer 1 again before you continue. Because everything we are about to celebrate in Layer 2 is built on that foundation. You cannot fully receive what God has given you through His divine power until you first know who you were in Christ before creation began.</p>
+<p>Now — with that foundation firmly beneath our feet — take out your Bible. Turn with me to 2 Peter 1:2-4. Read it slowly. Do not rush.</p>
+<div class="scripture-box"><p>"Grace and peace be multiplied unto you through the knowledge of God, and of Jesus our Lord. According as His divine power hath given unto us all things that pertain unto life and godliness, through the knowledge of Him that hath called us to glory and virtue. Whereby are given unto us exceeding great and precious promises: that by these ye might be partakers of the divine nature, having escaped the corruption that is in the world through lust."</p><div class="scripture-ref">2 Peter 1:2-4</div></div>
+<p>If you have a pen or a highlighter in your hand, I want you to mark five specific words as I call them out — because these five words are the five stones of Layer 2.</p>
+<div class="illumination-box"><div class="illum-label">💎 The Five Stones of Layer 2</div>
+<p><strong>Stone 1 — GIVEN</strong> (found in verses 3 and 4)</p>
+<p><strong>Stone 2 — KNOWLEDGE</strong> (found in verses 2 and 3)</p>
+<p><strong>Stone 3 — DIVINE POWER</strong> (found in verse 3)</p>
+<p><strong>Stone 4 — DIVINE NATURE</strong> (found in verse 4)</p>
+<p><strong>Stone 5 — PARTAKERS</strong> (found in verse 4)</p>
+</div>
+<p>When young David went out to face Goliath, he stopped at a stream and selected five smooth stones. He placed them in his shepherd's bag. He only used one — but he carried five. Why five? Because five is the number of grace in Scripture. And David knew that against a giant, you come prepared — not in your own strength, but in the grace of God.</p>
+<p>"He took his staff in his hand, chose five smooth stones from the stream, put them in the pouch of his shepherd's bag and, with his sling in his hand, approached the Philistine." (1 Samuel 17:40)</p>
+<p>Dear reader — I am asking you to do the same. Pick up these five stones from the stream of 2 Peter 1:2-4. Put them in your Fournity bag. Because the Goliaths of identity confusion, purposelessness, shame and spiritual ignorance have been standing in your valley for too long. And it is time to bring them down.</p>
+<h3 class="celebration-heading">The Number Five and The Apostle Peter</h3>
+<p>We taught in the last chapter of Layer 1 that numbers are significant in God's economy. Five is the number of grace. And it is no accident that the Apostle Peter gives us five power-words in three verses — because everything Peter is about to celebrate is a product of grace. Grace. And peace. Multiplied.</p>
+<p>I want to pause on that word — multiplied. The Apostle Peter was a businessman before he was an apostle. He was a fisherman — which in his day was not a casual hobby but a commercial enterprise. He understood nets, weights, quantities, markets and profit margins. He was a man who thought in numbers. And when a man who thinks in numbers chooses the word multiplied — he means it precisely. Not added. Not increased. Multiplied. Addition says: you had two, now you have four. Multiplication says: you had two, now you have two hundred.</p>
+<p>But Peter goes further than simple multiplication. The grace and peace he is describing operates exponentially — growing not in a straight line but in a compounding curve that accelerates with every increment of knowledge. Each revelation builds on the last. Each illumination multiplies what was already there. The more you know Christ, the more grace multiplies. The more grace multiplies, the more peace compounds. And the more peace compounds, the more your life begins to look like what God designed it to look like before the foundation of the world. Exponential grace. Exponential peace. Through the knowledge of Christ. This is what we are celebrating in Layer 2.</p>
+<h3 class="celebration-heading">The Four Dimensions of the Divinity of God</h3>
+<p>Before we open our five chapters, I want to give you a framework that will carry us through this entire layer — and indeed through the rest of this book. I call it The Four Dimensions of the Divinity of God. These four dimensions are not four separate compartments of God. They are four lenses through which we understand the One God — His being, His character, His identity and His activity. And as we will celebrate in Chapters 8, 9 and 10, the most breathtaking truth of 2 Peter 1:4 is that through the exceeding great and precious promises, we have been made partakers of all four.</p>
+<div class="illumination-box"><div class="illum-label">💡 Dimension 1 — The Essence of God</div><p><em>Question: What is God?</em><br>Essence refers to God's being, nature and substance — what God is in His innermost reality.<br>"God is Spirit." (John 4:24) · "God is light." (1 John 1:5) · "God is love." (1 John 4:8)<br>Essence answers the question of <strong>Being</strong>.</p></div>
+<div class="illumination-box"><div class="illum-label">💡 Dimension 2 — The Attributes of God</div><p><em>Question: What is God like?</em><br>Attributes describe the qualities, characteristics and perfections that flow from God's essence — how God's nature expresses itself. God is holy. God is just. God is merciful. God is faithful. God is omniscient — all-knowing. God is omnipotent — all-powerful. God is omnipresent — present everywhere. God is immutable — unchanging.<br>Attributes answer the question of <strong>Character</strong>.</p></div>
+<div class="illumination-box"><div class="illum-label">💡 Dimension 3 — The Deity of God</div><p><em>Question: Who is God?</em><br>Deity speaks of God's identity and personhood — not three gods, but one God revealed personally.<br>"Go therefore and make disciples of all nations, baptizing them in the name of the Father and of the Son and of the Holy Spirit." (Matthew 28:19)<br>Deity answers the question of <strong>Identity</strong>.</p></div>
+<div class="illumination-box"><div class="illum-label">💡 Dimension 4 — The Economy of God</div><p><em>Question: What does God do?</em><br>Economy speaks of God's activity — His works in creation, redemption and governance. He creates. He redeems. He sustains. He reconciles. He glorifies.<br>Economy answers the question of <strong>Activity</strong>.</p></div>
+<p>Put together, the framework looks like this:</p>
+<table class="bridge-table"><thead><tr><th>Dimension</th><th>Question</th><th>Focus</th><th>Scripture</th></tr></thead><tbody>
+<tr><td>Essence</td><td>What is God?</td><td>God's Being</td><td>Spirit, Light, Love</td></tr>
+<tr><td>Attributes</td><td>What is God like?</td><td>God's Character</td><td>Holy, Just, Merciful, Omnipotent</td></tr>
+<tr><td>Deity</td><td>Who is God?</td><td>God's Identity</td><td>Father, Son, Holy Spirit</td></tr>
+<tr><td>Economy</td><td>What does God do?</td><td>God's Activity</td><td>Creates, Redeems, Reconciles, Glorifies</td></tr>
+</tbody></table>
+<p>Or poetically: What is God? He is Spirit, Light and Love. What is God like? He is holy, faithful, just and merciful. Who is God? He is the Father, revealed through the Son, known by the Holy Spirit. What does God do? He creates, redeems, sustains, reconciles and glorifies.</p>
+<p>Now here is why this framework is essential for Layer 2. When Peter says we are "partakers of the divine nature" in 2 Peter 1:4 — he is not being vague. He is making the most audacious claim in the entire New Testament about the human being. He is saying that through the exceeding great and precious promises — accessed through knowledge, powered by divine power — we participate in all four dimensions. We will explore this in full in Chapters 8, 9 and 10. But first — a word of caution.</p>
+<h3 class="celebration-heading">A Word of Caution Before We Begin</h3>
+<p>Reading this book without processing it until it transforms you will make your head puffed up. I know this from personal experience. My wife, Prophetess Ntswaki Manana — the Hephzibah — said something over breakfast recently as we were discussing this very manuscript. I must crystallise it here because it belongs in this book:</p>
+<div class="declaration-box"><div class="decl-label">🕊️ The Hephzibah</div><p>"It is not enough for us to read the Word of God. We must become the Word of God." — Prophetess Ntswaki Manana, The Hephzibah</p></div>
+<p>I sat at the feet of my original pastor, Pastor Reuben Phiri, for six solid years before he released me to Rhema Bible College. I followed him home after his thirty-minute Sunday messages because I needed more. I can still visualise his house — the maroon carpet, me sitting on the floor, notebook in hand. He would teach me until he fell asleep on the sofa. I would shake his knee gently to wake him — until Mamoruti Angela called from the bedroom: "Honey, come sleep!"</p>
+<p>I graduated from Rhema Bible College with a diploma and a head full of information. And I had not yet turned my world upside down. Why? Because information without transformation is just data that has not completed the journey. The route from Egypt to the Promised Land was a forty-day journey. It took Israel forty years. Hebrews 3:19 tells us why: "So we see that they could not enter in because of unbelief." — Hebrews 3:19 They had information in abundance. But they did not allow that information to travel the full distance from data to transformation. And so they died in the wilderness with the Promised Land still on the horizon.</p>
+<p>FOURNITY is not a new revelation. It is an Illumination of what the body of Christ already has. There is no shortage of revelation in the Church. The problem is that we are always in a hurry — always reaching for the next revelation — without being transformed by the ones we already possess. When a room is dark, you cannot appreciate its furniture or make use of any of its equipment. You can die of hunger in a dark room that is full of food — simply because you cannot see it. Reading FOURNITY is about turning on the light.</p>
+<h3 class="celebration-heading">The Illumination Pathway</h3>
+<p>Before we open our five chapters, I want to give you the most important process map in this book. I call it The Illumination Pathway. It is the journey that every truth must travel if it is going to move from the page into your life. There are seven stages:</p>
+<div class="illumination-box"><div class="illum-label">🪜 The Seven Stages</div>
+<p><strong>1. DATA</strong> — Raw facts. The word you heard. The verse you read.</p>
+<p><strong>2. INFORMATION</strong> — Data organised and given context. You understand what the facts mean.</p>
+<p><strong>3. KNOWLEDGE</strong> (Know + Ledger) — Information processed and recorded in your inner account. You do not just know about something — you know it. Intimately. Personally. Transformatively.</p>
+<p><strong>4. UNDERSTANDING</strong> — Standing under the knowledge you have received — allowing its full weight to rest upon you and reshape your inner world.</p>
+<p><strong>5. WISDOM</strong> — The application of knowledge that has produced understanding. You do not just know it — you live it. You govern from it.</p>
+<p><strong>6. PRAISE</strong> — The natural response of a life transformed by wisdom. You cannot help but celebrate what God has done.</p>
+<p><strong>7. WORSHIP</strong> — The destination of the entire journey. Not an activity performed on Sunday morning — but a life so thoroughly transformed that every breath, every decision, every act of governing becomes an act of worship.</p>
+</div>
+<p style="text-align:center;font-family:'Cinzel',serif;letter-spacing:1px;color:var(--gold-light);">Data → Information → Knowledge → Understanding → Wisdom → Praise → Worship</p>
+<p>This is The Illumination Pathway. And 2 Peter 1:2-4 is the most concentrated description of this pathway in the entire New Testament.</p>
+<p>Now — pick up your five stones. Let us begin.</p>`,
     chapters:[
       { num:6, title:'Everything Was Given Before You Asked', verse:'2 Peter 1:3-4 | Hebrews 3:19 | 1 Samuel 17:40', free:true,
         body:`<div class="scripture-box"><p>"According as His divine power hath given unto us all things that pertain unto life and godliness, through the knowledge of Him that hath called us to glory and virtue. Whereby are"</p><div class="scripture-ref">given unto us exceeding great and precious promises." — 2 Peter 1:3-4</div></div>
@@ -1016,7 +1101,7 @@ const layers = [
 <p>Dominion was never a suggestion. It was always the design of a partaker of the divine nature, governing from the inside out, for the glory of the God whose address they carry.</p>
 <div class="illumination-box"><div class="illum-label">💡 Illumination</div><p>— The Five Stones, Completed The five smooth stones of 2 Peter 1:2-4 are not five separate concepts. They are five stages of one unbroken journey: What was Given is accessed through Knowledge. Knowledge releases Divine Power. Divine Power — flowing through all four dimensions of God's divinity — enables you to partake in the Divine Nature. And a Partaker of the divine nature governs — from the inside out — in the dominion that was always the design. Five stones. One journey. One Fournity.</p></div>
 <div class="lightup-box"><div class="lightup-label">🔦 Light Up Moment</div><p> The Goliath in your valley is not intimidated by your title, your education, your natural gifting or your accumulated experience. He is intimidated by one thing only — a partaker of the divine nature who knows what has been given, who walks in the knowledge of Christ, who carries all four dimensions of divine power in a clay vessel, and who governs from the inside out. Pick up your five stones. The Goliath in your valley has already lost.</p></div>
-<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>"I am a partaker of the divine nature — in all four dimensions. I carry His essence, His attributes, His deity and His economy. Everything pertaining to life and godliness has been given to me through His divine power. I choose to walk The Illumination Pathway — from data to worship — until the knowledge of Christ transforms every dimension of who I am. I govern from the inside out. My dominion does not begin with external position. It begins with the divine nature I carry — expressed through the divine power I have been given — through the knowledge of the One who called me to glory and virtue before the foundation of the world. I have five smooth stones in my Fournity bag: Given. Knowledge. Divine Power. Divine Nature. Partakers. The Goliath in my valley is already defeated. Father. Son. Holy Spirit. Me. Fournity — governing from the inside out." Chapter 10 of 40 | Illumination Layer 2: D — Divine Power, Divine Nature End of Illumination Layer 2 ILLUMINATION LAYER 3 E — Estranged by the Enemy's Deception in Eden (Genesis 3 — The Great Switch. Satan did not come for the fruit. He came for the identity.) Word in my Kasi streets is that Satan came to the garden to teach male Adam and female Adam to have sex — the fruit of the tree between two other trees (legs). We laugh about it. We make jokes about it. We use it to justify sexual immorality. Illumination Layer 3 is written to debunk this oversimplified explanation of what really happened in the garden of Eden. God already told the male and female Adam to be fruitful and to multiply and fill the earth. So even if indeed sexual intercourse was the fruit between two trees, God already gave the Eden couple a blessing to enjoy it. Besides, it is the very same God the Creator who created them both male and female with all their sexuality — so sorry, Gents, Satan did not come for the fruit. Every great celebration requires an honest reckoning with what was lost. We cannot fully appreciate the restoration without understanding the devastation. We cannot shout about the cure without sitting for a moment with the diagnosis. Layer Three is the painful peel of the onion — but it is necessary. It is not a layer of defeat. It is a layer of exposure. We are not lingering here to mourn — we are stopping here to understand exactly what the enemy did, how he did it, and why he did it — so that every layer that follows can be received with the full force of its healing power. The eagle ended up on the ground. This layer explains how. The next five layers explain how it got back in the air.</p></div>
+<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>"I am a partaker of the divine nature — in all four dimensions. I carry His essence, His attributes, His deity and His economy. Everything pertaining to life and godliness has been given to me through His divine power. I choose to walk The Illumination Pathway — from data to worship — until the knowledge of Christ transforms every dimension of who I am. I govern from the inside out. My dominion does not begin with external position. It begins with the divine nature I carry — expressed through the divine power I have been given — through the knowledge of the One who called me to glory and virtue before the foundation of the world. I have five smooth stones in my Fournity bag: Given. Knowledge. Divine Power. Divine Nature. Partakers. The Goliath in my valley is already defeated. Father. Son. Holy Spirit. Me. Fournity — governing from the inside out." Chapter 10 of 40 | Illumination Layer 2: D — Divine Power, Divine Nature</p></div>
 <button class="workbook-btn" onclick="openWorkbook(1,4)">📖 Open Chapter 10 Workbook</button>`,
         workbook:{ title:'Chapter 10 Workbook — Governing From The Inside Out',
           questions:[
@@ -1032,6 +1117,16 @@ const layers = [
   },
   {
     num:3, letter:'E', word:'Estranged in Eden', subtitle:'Genesis 3 — The Great Switch. Satan came for the identity.',
+    bridgeSubtitle:'The Great Switch',
+    bridgeTagline:'The Great Switch. Satan did not come for the fruit. He came for the identity.',
+    bridgeScripture:'Genesis 3',
+    bridgeIntro:`<p class="drop-cap-p">Word in my Kasi streets is that Satan came to the garden to teach male Adam and female Adam to have sex — the fruit of the tree between two other trees (legs). We laugh about it. We make jokes about it.</p>
+<p>We use it to justify sexual immorality. Illumination Layer 3 is written to debunk this oversimplified explanation of what really happened in the garden of Eden. God already told the male and female Adam to be fruitful and to multiply and fill the earth.</p>
+<p>So even if indeed sexual intercourse was the fruit between two trees, God already gave the Eden couple a blessing to enjoy it. Besides, it is the very same God the Creator who created them both male and female with all their sexuality — so sorry, Gents, Satan did not come for the fruit. Every great celebration requires an honest reckoning with what was lost.</p>
+<p>We cannot fully appreciate the restoration without understanding the devastation. We cannot shout about the cure without sitting for a moment with the diagnosis. Layer Three is the painful peel of the onion — but it is necessary.</p>
+<p>It is not a layer of defeat. It is a layer of exposure. We are not lingering here to mourn — we are stopping here to understand exactly what the enemy did, how he did it, and why he did it — so that every layer that follows can be received with the full force of its healing power.</p>
+<p>The eagle ended up on the ground. This layer explains how. The next five layers explain how it got back in the air.</p>
+`,
     chapters:[
       { num:11, title:'The Day The Music Died: What Really Happened in Genesis 3', verse:'Genesis 3:1-13 | Romans 5:12 | Ephesians 2:1', free:true,
         body:`<div class="scripture-box"><p>"Eve." The fallen male Adam called the female Adam "Eve" after the Genesis 3 loss of identity."</p><div class="scripture-ref">⚡ Dear reader — this is a lightbulb statement. Please highlight it. It will help you to see</div></div>
@@ -1338,7 +1433,7 @@ const layers = [
 <p>This is Fournity — unashamed, unhidden, gloriously free.</p>
 <div class="illumination-box"><div class="illum-label">💡 Illumination</div><p>Shame is not a personality trait. It is not a character flaw. It is a symptom — the symptom of an identity that has lost its anchor in God. You were not born with shame. Shame was born in the garden when the Union broke. And the moment the Union is restored — through Christ, through the word, through the knowledge of who God says you are — shame loses its address in your life. It has no home in a person who knows they are loved, chosen, forgiven and seated with Christ in heavenly places.</p></div>
 <div class="lightup-box"><div class="lightup-label">🔦 Light Up Moment</div><p>The fig leaf strategy has never worked and will never work. Achievement cannot cover what only blood can remove. Relationship cannot heal what only God can restore. Religion cannot manage what only grace can abolish. Stop sewing. Start receiving. The covering God provided in Genesis 3:21 — the one that required the shedding of blood — has been perfectly fulfilled at Calvary. You are covered. Permanently. Completely. Come out from behind the trees.</p></div>
-<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>— it is a symptom of a broken Union that has been fully restored in Jesus Christ. I am not hiding anymore. I am not sewing fig leaves. I am not managing symptoms while the real wound goes untreated. The blood of Jesus has removed my shame — permanently, legally, irreversibly. There is therefore now no condemnation for me — because I am in Christ Jesus. I am the Mephibosheth who has been called to the king's table. Not because of what I achieved. Not because of my track record. But because of the covenant — the covenant that Jesus of Nazareth cut on my behalf, in His own blood, on the cross of Calvary. I am coming out from behind the trees. I am leaving Lo-debar. I am taking my seat at the table. The shame is gone. The Union is restored. The identity is secure. Father. Son. Holy Spirit. Me. Fournity — unashamed, unhidden, gloriously free." Chapter 15 of 40 | Illumination Layer 3: E — Estranged by the Enemy's Deception in Eden ILLUMINATION LAYER 4 N — Nailed Back to God Through Jesus of Nazareth (Job 33:22-24 — The Messenger. The Mediator. The Redeemer. The Complete Sacrifice.) Layer 4 Introduction Heaven Answers Earth Everything in this book has been building to this layer. Layer 1 celebrated where we came from. Layer 2 celebrated how we were designed. Layer 3 exposed how we were stolen. And now — Layer 4 is where heaven answers earth. Where the eternal plan activated. Where the Lamb who was slain before the foundation of the world stepped into time and finished what eternity had already decided. This is not merely a layer of doctrine. To fully celebrate Jesus of Nazareth in this fourth Illumination layer, I must first help you receive the light of how this Jesus of Nazareth is God incarnate. And may I add — just as we who have received Jesus of Nazareth are God incarnate. The writer of Hebrews explains it far better than I can: "The Son is the radiance of God's glory and the exact representation of His being, sustaining all things by His powerful word. After He had provided purification for sins, He sat down at the right hand of the Majesty in heaven." — Hebrews 1:3 Oh my goodness — this is power packed. All five chapters in this layer are worship in manuscript form. Because Jesus of Nazareth — the Anointed Human Being, the Messenger, the Mediator, the Redeemer — did not just save our souls. He restored our address. He did not just forgive our sins. He gave back our name. He did not just open heaven. He brought us home to Fournity. This layer is where we shout: Hallelujah! Holy! Worthy! Introduction to Illumination Layer 4 | N — Nailed Back to God Through Jesus of Nazareth</p></div>
+<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>— it is a symptom of a broken Union that has been fully restored in Jesus Christ. I am not hiding anymore. I am not sewing fig leaves. I am not managing symptoms while the real wound goes untreated. The blood of Jesus has removed my shame — permanently, legally, irreversibly. There is therefore now no condemnation for me — because I am in Christ Jesus. I am the Mephibosheth who has been called to the king's table. Not because of what I achieved. Not because of my track record. But because of the covenant — the covenant that Jesus of Nazareth cut on my behalf, in His own blood, on the cross of Calvary. I am coming out from behind the trees. I am leaving Lo-debar. I am taking my seat at the table. The shame is gone. The Union is restored. The identity is secure. Father. Son. Holy Spirit. Me. Fournity — unashamed, unhidden, gloriously free." Chapter 15 of 40 | Illumination Layer 3: E — Estranged by the Enemy's Deception in Eden</p></div>
 <button class="workbook-btn" onclick="openWorkbook(2,4)">📖 Open Chapter 15 Workbook</button>`,
         workbook:{ title:'Chapter 15 Workbook — Mephibosheth: A Portrait of Every Human Being',
           questions:[
@@ -1354,6 +1449,18 @@ const layers = [
   },
   {
     num:4, letter:'N', word:'Nailed Back to God', subtitle:'Job 33:22-24 — Messenger. Mediator. Ransom.',
+    bridgeSubtitle:'Heaven Answers Earth',
+    bridgeTagline:'The Messenger. The Mediator. The Redeemer. The Complete Sacrifice.',
+    bridgeScripture:'Job 33:22-24',
+    bridgeIntro:`<p class="drop-cap-p">Everything in this book has been building to this layer. Layer 1 celebrated where we came from. Layer 2 celebrated how we were designed.</p>
+<p>Layer 3 exposed how we were stolen. And now — Layer 4 is where heaven answers earth. Where the eternal plan activated.</p>
+<p>Where the Lamb who was slain before the foundation of the world stepped into time and finished what eternity had already decided. This is not merely a layer of doctrine. To fully celebrate Jesus of Nazareth in this fourth Illumination layer, I must first help you receive the light of how this Jesus of Nazareth is God incarnate.</p>
+<p>And may I add — just as we who have received Jesus of Nazareth are God incarnate. The writer of Hebrews explains it far better than I can: "The Son is the radiance of God's glory and the exact representation of His being, sustaining all things by His powerful word. After He had provided purification for sins, He sat down at the right hand of the Majesty in heaven." — Hebrews 1:3 Oh my goodness — this is power packed.</p>
+<p>All five chapters in this layer are worship in manuscript form. Because Jesus of Nazareth — the Anointed Human Being, the Messenger, the Mediator, the Redeemer — did not just save our souls. He restored our address.</p>
+<p>He did not just forgive our sins. He gave back our name. He did not just open heaven.</p>
+<p>He brought us home to Fournity. This layer is where we shout: Hallelujah! Holy!</p>
+<p>Worthy!</p>
+`,
     chapters:[
       { num:16, title:'Know Who Is Your God — Who Are You Nailed Back To?', verse:'John 4:24 | Exodus 3:14 | Isaiah 40:28', free:true,
         body:`<div class="scripture-box"><p>"God is a Spirit: and they that worship Him must worship Him in spirit and in truth."</p><div class="scripture-ref">John 4:24</div></div>
@@ -1790,7 +1897,7 @@ const layers = [
 <p>Oh, Hallelujah!!!</p>
 <div class="illumination-box"><div class="illum-label">💡 Illumination</div><p>Tetelestai was the word stamped across a paid debt in the ancient commercial world. When Jesus cried it from the cross, He was not expressing relief that suffering was over. He was making a legal declaration: the account of human sin has been settled in full. No further payment required. No outstanding balance. The receipt is the empty tomb. The evidence is the torn veil. The confirmation is the seated Saviour at the right hand of the Father.</p></div>
 <div class="lightup-box"><div class="lightup-label">🔦 Light Up Moment</div><p> There is a difference between a priest who stands because the work is never done — and a King who sits because the work is complete. Jesus is not standing at the right hand of the Father, anxiously waiting to see if His sacrifice was sufficient. He is seated. The sitting is the statement. The work is finished. And your position in Him is as settled as His seat.</p></div>
-<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this aloud — as a governing declaration, not a desperate prayer: "It is finished. The debt — finished. The sacrifice — finished. The separation — finished. The enemy's legal claim — finished. The broken Union — finished, restored, permanent. I do not live before the finished work. I live from the finished work. I am not working toward acceptance — I am already accepted. I am not striving toward righteousness — I am already declared righteous. I am not hoping for access — the veil is already torn. There is therefore now no condemnation for me — because I am in Christ Jesus. Jesus sat down. And I sit with Him — in heavenly places, at the right hand of the Father, governing from the platform of His completed achievement. Tetelestai. It is finished. Welcome to Fournity — fully, finally, permanently secured." End of Illumination Layer 4 Chapter 20 of 40 | Illumination Layer 4: N — Nailed Back to God Through Jesus of Nazareth ILLUMINATION LAYER 5 T — Translated to the Right Hand of the Father (Ephesians 2:1-6 — Co-raised. Co-seated. Our positional address is the Throne Room.) Layer 5 Introduction What The Finished Work Did TO Us Layer Four celebrated what Jesus of Nazareth did on the cross — the finished work, the complete sacrifice, the blood that does what no other blood could do. Layer Five now celebrates what that finished work did TO US. Because the cross was not just an event that happened FOR us from a distance. It was an event that INCLUDED us — that grabbed us, lifted us, raised us, and seated us. "But God, being rich in mercy, because of the great love with which He loved us, even when we were dead in our trespasses, made us alive together with Christ — and raised us up with Him and seated us with Him in the heavenly places in Christ Jesus." — Ephesians 2:4-6 Ephesians 2:1-6 is one of the most staggering passages in the entire New Testament — because it does not describe what Jesus achieved for Himself. It describes what He achieved for US. Co-raised. Co-seated. In heavenly places. This is our current address. Not our future destination. Not our doctrinal aspiration. Our present reality. And the tragedy of the modern Church is not that this truth is absent from our Bibles — it is that it is absent from our daily consciousness. Layer Five exists to change that. Permanently. Introduction to Illumination Layer 5 | T — Translated to the Right Hand of the Father</p></div>
+<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this aloud — as a governing declaration, not a desperate prayer: "It is finished. The debt — finished. The sacrifice — finished. The separation — finished. The enemy's legal claim — finished. The broken Union — finished, restored, permanent. I do not live before the finished work. I live from the finished work. I am not working toward acceptance — I am already accepted. I am not striving toward righteousness — I am already declared righteous. I am not hoping for access — the veil is already torn. There is therefore now no condemnation for me — because I am in Christ Jesus. Jesus sat down. And I sit with Him — in heavenly places, at the right hand of the Father, governing from the platform of His completed achievement. Tetelestai. It is finished. Welcome to Fournity — fully, finally, permanently secured." End of Illumination Layer 4 Chapter 20 of 40 | Illumination Layer 4: N — Nailed Back to God Through Jesus of Nazareth</p></div>
 <button class="workbook-btn" onclick="openWorkbook(3,4)">📖 Open Chapter 20 Workbook</button>`,
         workbook:{ title:'Chapter 20 Workbook — The Finished Work',
           questions:[
@@ -1806,6 +1913,16 @@ const layers = [
   },
   {
     num:5, letter:'T', word:'Translated to the Throne', subtitle:'Ephesians 2:1-6 — Co-raised. Co-seated. The Throne Room is your address.',
+    bridgeSubtitle:'What The Finished Work Did TO Us',
+    bridgeTagline:'Co-raised. Co-seated. Our positional address is the Throne Room.',
+    bridgeScripture:'Ephesians 2:1-6',
+    bridgeIntro:`<p class="drop-cap-p">Layer Four celebrated what Jesus of Nazareth did on the cross — the finished work, the complete sacrifice, the blood that does what no other blood could do. Layer Five now celebrates what that finished work did TO US. Because the cross was not just an event that happened FOR us from a distance.</p>
+<p>It was an event that INCLUDED us — that grabbed us, lifted us, raised us, and seated us. "But God, being rich in mercy, because of the great love with which He loved us, even when we were dead in our trespasses, made us alive together with Christ — and raised us up with Him and seated us with Him in the heavenly places in Christ Jesus." — Ephesians 2:4-6 Ephesians 2:1-6 is one of the most staggering passages in the entire New Testament — because it does not describe what Jesus achieved for Himself. It describes what He achieved for US.</p>
+<p>Co-raised. Co-seated. In heavenly places.</p>
+<p>This is our current address. Not our future destination. Not our doctrinal aspiration.</p>
+<p>Our present reality. And the tragedy of the modern Church is not that this truth is absent from our Bibles — it is that it is absent from our daily consciousness. Layer Five exists to change that.</p>
+<p>Permanently.</p>
+`,
     chapters:[
       { num:21, title:'Co-Raised, Co-Seated: Your Address Has Changed', verse:'Ephesians 2:5-6 | Colossians 3:1-3 | Romans 6:4', free:true,
         body:`<div class="scripture-box"><p>"But God": The Two Words That Overruled Everything Ephesians 2:4-5 | Romans 5:8 | Genesis 50:20 But God, being rich in mercy, because of the great love with which He loved us, even when"</p><div class="scripture-ref">we were dead in our trespasses, made us alive together with Christ." — Ephesians 2:4-5</div></div>
@@ -2143,7 +2260,7 @@ const layers = [
 <p>This is Fournity — governing, reigning, stewarding the earth for the glory of the King who owns it and the Lamb who restored our right to govern it.</p>
 <div class="illumination-box"><div class="illum-label">💡 Illumination</div><p>The woman on the train still had her title deed. The squatters in her house were loud, they were present, they were acting as though they owned it — but they had no title deed. The enemy is loud. The enemy is present. The enemy acts as though he owns this world. But he has no title deed. You do. The blood of the Lamb put your name on it. Present it. The squatter has no legal ground to stand on.</p></div>
 <div class="lightup-box"><div class="lightup-label">🔦 Light Up Moment</div><p> Adam handed over the stewardship through deception. Jesus restored it through redemption. The same devil who asked Adam "Did God really say?" asked Jesus the same question in the wilderness. Adam doubted and surrendered. Jesus answered "It is written" and held his ground. The difference between Adam and Jesus was not divine power — it was identity. Know who you are, and the devil's questions lose their power. The title deed is in your hand. Do not give it away.</p></div>
-<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this as the governing declaration of a throne-room resident and earth-stewarding priest and king: "The earth is the Lord's and the fullness thereof. And the Lord has given the earth to the children of man — to me. I am a designated steward of God's earth. I am not a squatter. I am not a refugee. I am not a prisoner of the domain of darkness. I am a co-raised, co-seated, blood-bought, Spirit-filled governing priest and king — and my name is written on the title deed of Revelation 5:10. The enemy is a squatter. He has no title deed. He has no legal right. His occupation is fraudulent and his eviction is in process — enforced by the finished work of Christ and the governing authority of the Fournity generation. I present the title deed. I enforce my authority. I reign on the earth — not from the ground of the serpent, but from the throne room of the Father. The title deed has my name on it. Written in the blood of the Lamb. Permanent. Irrevocable. Enforced. Father. Son. Holy Spirit. Me. Fournity — governing from the throne room, reigning on the earth, for the glory of the King." Chapter 25 of 40 | Illumination Layer 5: T — Translated to the Right Hand of the Father ILLUMINATION LAYER 6 I — Indwelt by the Holy Spirit Since John 20:22 and Acts Chapter 2 (Acts 2 — Pentecost was not a prayer meeting. It was God's home away from homecoming.) Layer 6 Introduction The Divine Resident Moves Back In Layer Four celebrated what Jesus of Nazareth accomplished at Calvary — the legal restoration of Fournity through the finished work of the cross. Layer Five celebrated where that finished work positioned us — co-raised, co-seated, hidden with Christ in God, addressed in the throne room. Layer Six now celebrates the event that made all of that positional truth experientially accessible — the coming of the Holy Spirit. Because the cross restored Fournity legally. Pentecost restored it residentially. The blood opened the way. The Spirit walked through the door and moved back in. God did not just make peace with humanity at Calvary — He moved back into the house He had always wanted to live in. The human spirit — breathed into existence in Genesis 2:7, darkened in Genesis 3, legally restored at Calvary — was fully re-inhabited at Pentecost. Fournity became not just positionally true but experientially operational. "And I will put My Spirit within you, and cause you to walk in My statutes and be careful to obey My rules." — Ezekiel 36:27 This layer celebrates the return of the Divine Resident — the most intimate, most personal, most transformative dimension of the restored Union. Five chapters. One magnificent truth: God is not looking for a building. He is looking for a body. And He found one — in you. Introduction to Illumination Layer 6 | I — Indwelt by the Holy Spirit Since John 20:22 and Acts Chapter 2</p></div>
+<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this as the governing declaration of a throne-room resident and earth-stewarding priest and king: "The earth is the Lord's and the fullness thereof. And the Lord has given the earth to the children of man — to me. I am a designated steward of God's earth. I am not a squatter. I am not a refugee. I am not a prisoner of the domain of darkness. I am a co-raised, co-seated, blood-bought, Spirit-filled governing priest and king — and my name is written on the title deed of Revelation 5:10. The enemy is a squatter. He has no title deed. He has no legal right. His occupation is fraudulent and his eviction is in process — enforced by the finished work of Christ and the governing authority of the Fournity generation. I present the title deed. I enforce my authority. I reign on the earth — not from the ground of the serpent, but from the throne room of the Father. The title deed has my name on it. Written in the blood of the Lamb. Permanent. Irrevocable. Enforced. Father. Son. Holy Spirit. Me. Fournity — governing from the throne room, reigning on the earth, for the glory of the King." Chapter 25 of 40 | Illumination Layer 5: T — Translated to the Right Hand of the Father</p></div>
 <button class="workbook-btn" onclick="openWorkbook(4,4)">📖 Open Chapter 25 Workbook</button>`,
         workbook:{ title:'Chapter 25 Workbook — The Title Deed Has Your Name On It',
           questions:[
@@ -2159,6 +2276,15 @@ const layers = [
   },
   {
     num:6, letter:'I', word:'Indwelt by the Spirit', subtitle:'Acts 2 — Pentecost was God\'s Everlasting Homecoming',
+    bridgeSubtitle:'The Divine Resident Moves Back In',
+    bridgeTagline:'Pentecost was not a prayer meeting. It was God\'s home away from homecoming.',
+    bridgeScripture:'Acts 2',
+    bridgeIntro:`<p class="drop-cap-p">Layer Four celebrated what Jesus of Nazareth accomplished at Calvary — the legal restoration of Fournity through the finished work of the cross. Layer Five celebrated where that finished work positioned us — co-raised, co-seated, hidden with Christ in God, addressed in the throne room. Layer Six now celebrates the event that made all of that positional truth experientially accessible — the coming of the Holy Spirit.</p>
+<p>Because the cross restored Fournity legally. Pentecost restored it residentially. The blood opened the way.</p>
+<p>The Spirit walked through the door and moved back in. God did not just make peace with humanity at Calvary — He moved back into the house He had always wanted to live in. The human spirit — breathed into existence in Genesis 2:7, darkened in Genesis 3, legally restored at Calvary — was fully re-inhabited at Pentecost.</p>
+<p>Fournity became not just positionally true but experientially operational. "And I will put My Spirit within you, and cause you to walk in My statutes and be careful to obey My rules." — Ezekiel 36:27 This layer celebrates the return of the Divine Resident — the most intimate, most personal, most transformative dimension of the restored Union. Five chapters.</p>
+<p>One magnificent truth: God is not looking for a building. He is looking for a body. And He found one — in you.</p>
+`,
     chapters:[
       { num:26, title:'Pentecost Is God\'s Everlasting Homecoming', verse:'Acts 2 | Ezekiel 36:26-27 | Jeremiah 31:33 | Joel 2:28-29', free:true,
         body:`<div class="scripture-box"><p>"And I will give you a new heart, and a new spirit I will put within you. And I will remove the heart of stone from your flesh and give you a heart of flesh. And I will put My Spirit within"</p><div class="scripture-ref">you." — Ezekiel 36:26-27</div></div>
@@ -2477,7 +2603,7 @@ const layers = [
 <p>This is the indwelt life — overflowing, inexhaustible, without measure.</p>
 <div class="illumination-box"><div class="illum-label">💡 Illumination</div><p>The Spirit was given to Jesus without measure. The same Spirit now lives in you. The difference between how Jesus operated in the Spirit and how most believers operate is not a difference in the Spirit's availability — it is a difference in the believer's consciousness of what is available. Jesus knew what lived inside Him. He operated from that knowledge. Every miracle, every word of authority, every act of compassion flowed from His awareness of the unlimited Resident within. You carry the same Spirit. Operate from that knowledge.</p></div>
 <div class="lightup-box"><div class="lightup-label">🔦 Light Up Moment</div><p> Acts 4:31 — the same disciples who were filled in Acts 2, filled again. The Spirit did not run out between Acts 2 and Acts 4. They simply came back to the Source. The ongoing filling is not a sign that the initial filling was insufficient — it is a sign that the life of Fournity is designed for continuous dependence, continuous openness, continuous reception from an inexhaustible Supply. You are not diminished by what you have used. You are refilled by the One who never runs dry. Come back to the Source. Be filled again.</p></div>
-<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this as the declaration of a Spirit-filled, fullness-inhabiting, Fournity-living believer: "I live from fullness, not emptiness. The Spirit without measure — the same Spirit who indwelt Jesus of Nazareth and empowered every miracle, every act of authority, every expression of divine life that flowed through Him — lives in me. I am not running on a limited supply. I am connected to the infinite Source. I am continuously filled — present, passive, imperative — receiving again and again from the One who never runs out. I refuse to live as though I am empty. I refuse to seek from outside what lives within. I refuse temple amnesia. I choose fullness consciousness. The Spirit who raised Jesus from the dead lives in me — without measure, without restriction, without a ceiling on what is available. The same Spirit who hovered over the waters in Genesis 1:2, who filled the Tabernacle, who filled Solomon's Temple, who breathed in John 20:22, who came with the rushing wind of Acts 2 — lives in me. Fill me again, Lord. And again. And again. Father. Son. Holy Spirit. Me. Fournity — lived from the inside out, overflowing, without measure, for the glory of the God who made me His home." Chapter 30 of 40 | Illumination Layer 6: I — Indwelt by the Holy Spirit Since John 20:22 and Acts Chapter 2 End of Illumination Layer 6 ILLUMINATION LAYER 7 T — The Kingdom Enforced Through Our Restored Union (Matthew 6:9-13 — The Lord's Prayer is a warfare declaration, not a religious ritual.) Layer 7 Introduction Where Celebration Becomes Commission Six layers have brought us to this point. We have celebrated our Pre-Adamic origin in God — chosen before the foundation of the world, known before time began, purposed before creation was spoken into existence. We have marvelled at our design in His image — the image-bearer, the Fournity carrier, the one breathed into existence by the very breath of the Almighty and commissioned in Genesis 1:28 to fill, subdue and govern. We have honestly reckoned with what was lost in Eden — the Great Switch, the identity theft, the broken Union that Genesis 3 produced when the serpent's ancient question found its first willing audience. We have worshipped at the finished work of Calvary — the cross that legally restored what the fall illegally stole, the blood that cancelled the debt, the resurrection that broke the only weapon the enemy had left. We have inhabited our positional truth at the right hand of the Father — co-raised, co-seated, hidden with Christ in God, addressed in the throne room, our permanent spiritual postcode written in the blood of the Lamb. We have celebrated the return of the Divine Resident at Pentecost — the Holy Spirit who moved back into the house He had always wanted to live in, the inner Resident who makes everything that the previous five layers declared not merely positionally true but experientially operational. And now — Layer Seven asks the necessary question: so what? What does all of this mean on Monday morning? What does Fournity look like when the bills arrive, when the diagnosis comes, when the opposition rises, when the enemy challenges everything that the previous six layers have declared? What does Fournity look like in the prayer closet, in the hospital ward, in the boardroom, in the neighbourhood, in the nation? Layer Seven is where celebration becomes commission. Where theology becomes strategy. Where the restored Union becomes the operational platform from which the Kingdom of God is enforced on the earth. The Lord's Prayer — the most repeated prayer in the history of Christianity — is read here not as a liturgical recitation but as a governing declaration issued by the Commander to His commissioned army. And the spiritual weapons of Fournity are celebrated as the arsenal of a generation that knows who they are and refuses to govern from anything less than their full authority in Christ. "Your Kingdom come, Your will be done, on earth as it is in heaven." — Matthew 6:10 Introduction to Illumination Layer 7 | T — The Kingdom Enforced Through Our Restored Union</p></div>
+<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this as the declaration of a Spirit-filled, fullness-inhabiting, Fournity-living believer: "I live from fullness, not emptiness. The Spirit without measure — the same Spirit who indwelt Jesus of Nazareth and empowered every miracle, every act of authority, every expression of divine life that flowed through Him — lives in me. I am not running on a limited supply. I am connected to the infinite Source. I am continuously filled — present, passive, imperative — receiving again and again from the One who never runs out. I refuse to live as though I am empty. I refuse to seek from outside what lives within. I refuse temple amnesia. I choose fullness consciousness. The Spirit who raised Jesus from the dead lives in me — without measure, without restriction, without a ceiling on what is available. The same Spirit who hovered over the waters in Genesis 1:2, who filled the Tabernacle, who filled Solomon's Temple, who breathed in John 20:22, who came with the rushing wind of Acts 2 — lives in me. Fill me again, Lord. And again. And again. Father. Son. Holy Spirit. Me. Fournity — lived from the inside out, overflowing, without measure, for the glory of the God who made me His home." Chapter 30 of 40 | Illumination Layer 6: I — Indwelt by the Holy Spirit Since John 20:22 and Acts Chapter 2</p></div>
 <button class="workbook-btn" onclick="openWorkbook(5,4)">📖 Open Chapter 30 Workbook</button>`,
         workbook:{ title:'Chapter 30 Workbook — The Fruit That Proves The Resident',
           questions:[
@@ -2493,6 +2619,16 @@ const layers = [
   },
   {
     num:7, letter:'T', word:'The Kingdom Enforced', subtitle:'Matthew 6:9-13 — The Lord\'s Prayer is a warfare declaration',
+    bridgeSubtitle:'Where Celebration Becomes Commission',
+    bridgeTagline:'The Lord\'s Prayer is a warfare declaration, not a religious ritual.',
+    bridgeScripture:'Matthew 6:9-13',
+    bridgeIntro:`<p class="drop-cap-p">Six layers have brought us to this point. We have celebrated our Pre-Adamic origin in God — chosen before the foundation of the world, known before time began, purposed before creation was spoken into existence. We have marvelled at our design in His image — the image-bearer, the Fournity carrier, the one breathed into existence by the very breath of the Almighty and commissioned in Genesis 1:28 to fill, subdue and govern.</p>
+<p>We have honestly reckoned with what was lost in Eden — the Great Switch, the identity theft, the broken Union that Genesis 3 produced when the serpent's ancient question found its first willing audience. We have worshipped at the finished work of Calvary — the cross that legally restored what the fall illegally stole, the blood that cancelled the debt, the resurrection that broke the only weapon the enemy had left. We have inhabited our positional truth at the right hand of the Father — co-raised, co-seated, hidden with Christ in God, addressed in the throne room, our permanent spiritual postcode written in the blood of the Lamb.</p>
+<p>We have celebrated the return of the Divine Resident at Pentecost — the Holy Spirit who moved back into the house He had always wanted to live in, the inner Resident who makes everything that the previous five layers declared not merely positionally true but experientially operational. And now — Layer Seven asks the necessary question: so what? What does all of this mean on Monday morning?</p>
+<p>What does Fournity look like when the bills arrive, when the diagnosis comes, when the opposition rises, when the enemy challenges everything that the previous six layers have declared? What does Fournity look like in the prayer closet, in the hospital ward, in the boardroom, in the neighbourhood, in the nation? Layer Seven is where celebration becomes commission.</p>
+<p>Where theology becomes strategy. Where the restored Union becomes the operational platform from which the Kingdom of God is enforced on the earth. The Lord's Prayer — the most repeated prayer in the history of Christianity — is read here not as a liturgical recitation but as a governing declaration issued by the Commander to His commissioned army.</p>
+<p>And the spiritual weapons of Fournity are celebrated as the arsenal of a generation that knows who they are and refuses to govern from anything less than their full authority in Christ. "Your Kingdom come, Your will be done, on earth as it is in heaven." — Matthew 6:10</p>
+`,
     chapters:[
       { num:31, title:"The Lord's Prayer Is A Restoration of Genesis 1:28", verse:'Genesis 1:28 | Matthew 28:18-20 | Luke 10:19', free:true,
         body:`<div class="scripture-box"><p>"Pray then like this: Our Father in heaven, hallowed be Your name. Your Kingdom come, Your will be done, on earth as it is in heaven."</p><div class="scripture-ref">Matthew 6:9-10</div></div>
@@ -2739,7 +2875,7 @@ const layers = [
 <p>This is Fournity — expressed, demonstrated, lived from the inside out, until the earth knows what heaven already knows.</p>
 <div class="illumination-box"><div class="illum-label">💡 Illumination</div><p>The Fournity generation does not lack position. It lacks the courage to act from position. Every dimension of the truth celebrated in the previous thirty-four chapters is positionally true of every born-again believer right now. The co-seating is real. The Exousia is given. The Spirit is resident. The blood is effective. The Name is above every name. All of this is true — whether or not the governing representative acts from it. But truth that does not produce action is dead faith. The crossing from position to expression is the most important journey of the Christian life. It is time to cross.</p></div>
 <div class="lightup-box"><div class="lightup-label">🔦 Light Up Moment</div><p> Romans 8:19 — creation waits with eager longing for the revealing of the sons of God. Not the coming of the sons of God — the REVEALING. They are already present. They are already on the earth. They are already positioned, already equipped, already indwelt, already co-seated. What creation is waiting for is not their arrival — it is their awakening. The moment when the sons and daughters of God stop living as though they are something less than what they are — and start governing as what they have always been. You are already on the earth. Now be revealed.</p></div>
-<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this as the governing commission of the Fournity generation: "I will not keep the truth of Fournity as a doctrine. I will live it as a daily reality. I make all four crossings — from hearing to believing, from believing to confessing, from confessing to acting, from acting to abiding. I believe — not just intellectually but with my whole heart — that I am co-seated with Christ in heavenly places. I confess it — out loud, in the face of every circumstance that contradicts it. I act from it — I speak to mountains, I bind what needs to be bound, I loose what needs to be loosed, I enforce heaven's conditions on my earth. And I abide — I remain in the vine, drawing continuously from the inexhaustible supply of the One in whom I live and move and have my being. The creation is groaning for the sons and daughters of God to be revealed. I choose to be revealed. Not tomorrow. Not when my circumstances improve. Not when I feel more spiritually ready. Now. On this earth. As it is in heaven. Father. Son. Holy Spirit. Me. Fournity — governing, acting, abiding, revealed." Chapter 35 of 40 | Illumination Layer 7: T — The Kingdom Enforced Through Our Restored Union ILLUMINATION LAYER 8 Y — Your Eternal Identity Established Forever (Psalm 24:1 | Psalm 115:16 | Romans 8:19 — The earth is waiting for you to wake up.) Layer 8 Introduction The Letter That Changes Everything Everything in this book has been moving toward this final layer. Eight letters. Eight layers. Thirty-five chapters of celebration, theology, history, prophecy and commission. And now we arrive at the destination — the letter that carries the most personal, most direct, most unambiguous declaration in the entire IDENTITY acrostic. Y — You. Not the Church in the abstract. Not the saints in general. Not some future generation of super-believers who will eventually arise when conditions are right. YOU. The specific human being holding this book. The one whose name was known before their mother's name. The one who was chosen before the foundation of the world. The one who was breathed into existence by the Almighty, designed in His image, estranged by the enemy's deception, nailed back to God through Jesus of Nazareth, translated to the right hand of the Father, indwelt by the Holy Spirit since Acts chapter two, commissioned to enforce the Kingdom through their restored Union. YOU. This layer does not introduce new theology. It takes everything that has already been established across thirty-five chapters and places it squarely on the shoulders of the person reading — commissioning them, in the most personal and direct terms possible, to arise and govern the earth for the Father who owns it and the Son who bought it back. The groaning of creation is about to find its answer. The eagle is about to return to the air. The governing generation is about to be revealed. And the governing generation is you. "In that day you will know that I am in the Father, and you in Me, and I in you." — John 14:20 Introduction to Illumination Layer 8 | Y — Your Eternal Identity Established Forever</p></div>
+<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this as the governing commission of the Fournity generation: "I will not keep the truth of Fournity as a doctrine. I will live it as a daily reality. I make all four crossings — from hearing to believing, from believing to confessing, from confessing to acting, from acting to abiding. I believe — not just intellectually but with my whole heart — that I am co-seated with Christ in heavenly places. I confess it — out loud, in the face of every circumstance that contradicts it. I act from it — I speak to mountains, I bind what needs to be bound, I loose what needs to be loosed, I enforce heaven's conditions on my earth. And I abide — I remain in the vine, drawing continuously from the inexhaustible supply of the One in whom I live and move and have my being. The creation is groaning for the sons and daughters of God to be revealed. I choose to be revealed. Not tomorrow. Not when my circumstances improve. Not when I feel more spiritually ready. Now. On this earth. As it is in heaven. Father. Son. Holy Spirit. Me. Fournity — governing, acting, abiding, revealed." Chapter 35 of 40 | Illumination Layer 7: T — The Kingdom Enforced Through Our Restored Union</p></div>
 <button class="workbook-btn" onclick="openWorkbook(6,4)">📖 Open Chapter 35 Workbook</button>`,
         workbook:{ title:'Chapter 35 Workbook — The Eagle Is Back In The Air',
           questions:[
@@ -2755,6 +2891,18 @@ const layers = [
   },
   {
     num:8, letter:'Y', word:'You — The Governor', subtitle:'Romans 8:19 — Creation is waiting for you to wake up',
+    bridgeSubtitle:'The Letter That Changes Everything',
+    bridgeTagline:'The earth is waiting for you to wake up.',
+    bridgeScripture:'Psalm 24:1 | Psalm 115:16 | Romans 8:19',
+    bridgeIntro:`<p class="drop-cap-p">Everything in this book has been moving toward this final layer. Eight letters. Eight layers.</p>
+<p>Thirty-five chapters of celebration, theology, history, prophecy and commission. And now we arrive at the destination — the letter that carries the most personal, most direct, most unambiguous declaration in the entire IDENTITY acrostic. Y — You.</p>
+<p>Not the Church in the abstract. Not the saints in general. Not some future generation of super-believers who will eventually arise when conditions are right.</p>
+<p>YOU. The specific human being holding this book. The one whose name was known before their mother's name.</p>
+<p>The one who was chosen before the foundation of the world. The one who was breathed into existence by the Almighty, designed in His image, estranged by the enemy's deception, nailed back to God through Jesus of Nazareth, translated to the right hand of the Father, indwelt by the Holy Spirit since Acts chapter two, commissioned to enforce the Kingdom through their restored Union. YOU.</p>
+<p>This layer does not introduce new theology. It takes everything that has already been established across thirty-five chapters and places it squarely on the shoulders of the person reading — commissioning them, in the most personal and direct terms possible, to arise and govern the earth for the Father who owns it and the Son who bought it back. The groaning of creation is about to find its answer.</p>
+<p>The eagle is about to return to the air. The governing generation is about to be revealed. And the governing generation is you.</p>
+<p>"In that day you will know that I am in the Father, and you in Me, and I in you." — John 14:20</p>
+`,
     chapters:[
       { num:36, title:'You — The Governor', verse:'Genesis 1:26-28 | Psalm 8:4-6 | Romans 8:19', free:true,
         body:`<div class="scripture-box"><p>"For the creation waits with eager longing for the revealing of the sons of God."</p><div class="scripture-ref">Romans</div></div>
@@ -3666,7 +3814,7 @@ function buildLayers() {
   introItem.className = 'layer-block';
   introItem.innerHTML = `
     <div class="layer-hdr" style="cursor:pointer;">
-      <div class="layer-num">I</div>
+      <div class="layer-num" style="font-size:28px;">📖</div>
       <div class="layer-info">
         <div class="layer-tag">Introduction</div>
         <div class="layer-title">Before You Begin — Know the God You Are United With</div>
@@ -3725,7 +3873,8 @@ function buildLayers() {
         <span class="pathway-pill">Wisdom</span>
         <span class="pathway-pill">Praise</span>
         <span class="pathway-pill">Worship</span>
-      </div>`;
+      </div>
+      ${layer.bridgeIntro ? `<div class="layer-bridge-link" onclick="openLayerBridge(${li})">📖 Read Layer Introduction</div>` : ''}`;
     chs.appendChild(opener);
     layer.chapters.forEach((ch, ci) => {
       const item = document.createElement('div');
@@ -3816,7 +3965,15 @@ function saveQuickNote(key) {
 function openReader(ch, li, ci) {
   document.getElementById('rCh').textContent = `Layer ${layers[li].num} · Chapter ${ch.num} of 40`;
   document.getElementById('rTitle').textContent = ch.title;
-  document.getElementById('rBody').innerHTML = (ch.body || '<p>Content loading...</p>') + renderNoteBox(ch.num);
+  let bridgeCTA = '';
+  if (ci === layers[li].chapters.length - 1 && li + 1 < layers.length) {
+    const nextLayer = layers[li + 1];
+    bridgeCTA = `<div class="bridge-cta" onclick="openLayerBridge(${li + 1})">
+      <div class="bridge-cta-label">Layer ${layers[li].num} Complete — Continue the Journey</div>
+      <div class="bridge-cta-title">${nextLayer.letter} — ${nextLayer.word} →</div>
+    </div>`;
+  }
+  document.getElementById('rBody').innerHTML = (ch.body || '<p>Content loading...</p>') + bridgeCTA + renderNoteBox(ch.num);
   currentReaderKind = 'chapter'; currentLi = li; currentCi = ci;
   prepareTTSStructure();
   stopAudio();
@@ -3824,6 +3981,8 @@ function openReader(ch, li, ci) {
   document.getElementById('audioStatus').textContent = 'Ready';
   document.getElementById('readerOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  document.getElementById('readerOverlay').scrollTop = 0;
+  updateNavBar();
 
   // Mark as read after a short while reading, or immediately if they scroll near the bottom
   clearTimeout(window._readTimer);
@@ -3842,6 +4001,33 @@ function closeReader() {
   document.body.style.overflow = '';
   if (isPlaying) document.getElementById('miniPlayer').classList.add('visible');
 }
+function openLayerBridge(li) {
+  const layer = layers[li];
+  if (!layer || !layer.bridgeIntro) return;
+  document.getElementById('rCh').textContent = `Layer ${layer.num} Overview`;
+  document.getElementById('rTitle').textContent = layer.bridgeSubtitle || layer.word;
+  const taglineHtml = layer.bridgeTagline
+    ? `${layer.bridgeScripture} — ${layer.bridgeTagline}`
+    : (layer.bridgeScripture || '');
+  const headerHtml = `
+    <div class="bridge-hdr" style="margin:-36px -40px 28px; padding-left:37px;">
+      <div class="bridge-hdr-letter">${layer.letter}</div>
+      <div class="bridge-hdr-tag">Layer ${layer.num} of 8 — Overview</div>
+      <div class="bridge-hdr-title">${layer.word}</div>
+      <div class="bridge-hdr-tagline">${taglineHtml}</div>
+    </div>`;
+  const beginBtn = `<button class="bridge-begin-btn" onclick="closeReader(); setTimeout(()=>openReader(layers[${li}].chapters[0], ${li}, 0), 300);">Begin Chapter ${layer.chapters[0].num}: ${layer.chapters[0].title} →</button>`;
+  document.getElementById('rBody').innerHTML = headerHtml + layer.bridgeIntro + beginBtn + renderNoteBox('bridge-' + layer.num);
+  currentReaderKind = 'bridge'; currentLi = li; currentCi = null;
+  prepareTTSStructure();
+  stopAudio();
+  document.getElementById('audioFill').style.width = '0%';
+  document.getElementById('audioStatus').textContent = 'Ready';
+  document.getElementById('readerOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('readerOverlay').scrollTop = 0;
+  updateNavBar();
+}
 function openConclusion() {
   document.getElementById('rCh').textContent = `Conclusion`;
   document.getElementById('rTitle').textContent = 'Welcome Home';
@@ -3853,6 +4039,8 @@ function openConclusion() {
   document.getElementById('audioStatus').textContent = 'Ready';
   document.getElementById('readerOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  document.getElementById('readerOverlay').scrollTop = 0;
+  updateNavBar();
 }
 function openIntroduction() {
   document.getElementById('rCh').textContent = `Introduction`;
@@ -3865,6 +4053,92 @@ function openIntroduction() {
   document.getElementById('audioStatus').textContent = 'Ready';
   document.getElementById('readerOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  document.getElementById('readerOverlay').scrollTop = 0;
+  updateNavBar();
+}
+function getNextReaderTarget() {
+  if (currentReaderKind === 'intro') {
+    if (layers[0] && layers[0].chapters[0]) return { type: 'chapter', ch: layers[0].chapters[0], li: 0, ci: 0 };
+    return null;
+  }
+  if (currentReaderKind === 'bridge' && currentLi !== null) {
+    const layer = layers[currentLi];
+    if (layer && layer.chapters[0]) return { type: 'chapter', ch: layer.chapters[0], li: currentLi, ci: 0 };
+    return null;
+  }
+  if (currentReaderKind === 'chapter' && currentLi !== null && currentCi !== null) {
+    const layer = layers[currentLi];
+    if (currentCi + 1 < layer.chapters.length) {
+      return { type: 'chapter', ch: layer.chapters[currentCi + 1], li: currentLi, ci: currentCi + 1 };
+    }
+    if (currentLi + 1 < layers.length) {
+      return { type: 'bridge', li: currentLi + 1 };
+    }
+    return { type: 'conclusion' };
+  }
+  return null;
+}
+function getPrevReaderTarget() {
+  if (currentReaderKind === 'intro') return null;
+  if (currentReaderKind === 'conclusion') {
+    const lastLi = layers.length - 1;
+    const lastLayer = layers[lastLi];
+    const lastCi = lastLayer.chapters.length - 1;
+    return { type: 'chapter', ch: lastLayer.chapters[lastCi], li: lastLi, ci: lastCi };
+  }
+  if (currentReaderKind === 'bridge' && currentLi !== null) {
+    if (currentLi === 0) return { type: 'intro' };
+    const prevLayer = layers[currentLi - 1];
+    const prevCi = prevLayer.chapters.length - 1;
+    return { type: 'chapter', ch: prevLayer.chapters[prevCi], li: currentLi - 1, ci: prevCi };
+  }
+  if (currentReaderKind === 'chapter' && currentLi !== null && currentCi !== null) {
+    if (currentCi > 0) {
+      const layer = layers[currentLi];
+      return { type: 'chapter', ch: layer.chapters[currentCi - 1], li: currentLi, ci: currentCi - 1 };
+    }
+    if (currentLi === 0) return { type: 'intro' };
+    if (layers[currentLi].bridgeIntro) return { type: 'bridge', li: currentLi };
+    const prevLayer = layers[currentLi - 1];
+    const prevCi = prevLayer.chapters.length - 1;
+    return { type: 'chapter', ch: prevLayer.chapters[prevCi], li: currentLi - 1, ci: prevCi };
+  }
+  return null;
+}
+function navigateNext() {
+  const next = getNextReaderTarget();
+  if (!next) return;
+  if (next.type === 'chapter') {
+    if (!hasFullAccess(next.ch)) { openLockedChapter(); return; }
+    openReader(next.ch, next.li, next.ci);
+  } else if (next.type === 'bridge') {
+    openLayerBridge(next.li);
+  } else if (next.type === 'conclusion') {
+    openConclusion();
+  }
+}
+function navigatePrev() {
+  const prev = getPrevReaderTarget();
+  if (!prev) return;
+  if (prev.type === 'chapter') {
+    if (!hasFullAccess(prev.ch)) { openLockedChapter(); return; }
+    openReader(prev.ch, prev.li, prev.ci);
+  } else if (prev.type === 'bridge') {
+    openLayerBridge(prev.li);
+  } else if (prev.type === 'intro') {
+    openIntroduction();
+  }
+}
+function updateNavBar() {
+  const prevBtn = document.getElementById('navPrevBtn');
+  const nextBtn = document.getElementById('navNextBtn');
+  if (!prevBtn || !nextBtn) return;
+  const prev = getPrevReaderTarget();
+  const next = getNextReaderTarget();
+  prevBtn.classList.toggle('nav-disabled', !prev);
+  nextBtn.classList.toggle('nav-disabled', !next);
+  nextBtn.textContent = (next && next.type === 'conclusion') ? 'Conclusion ›' : 'Next ›';
+  prevBtn.textContent = (prev && prev.type === 'intro') ? '‹ Introduction' : '‹ Previous';
 }
 function openIntroWorkbook() {
   document.getElementById('wbTitle').textContent = 'Introduction Workbook';
