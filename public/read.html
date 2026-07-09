@@ -175,6 +175,11 @@ body { background:var(--deep); color:var(--cream); font-family:'Inter',sans-seri
 .audio-btn-sm { width:32px; height:32px; font-size:13px; background:rgba(201,168,76,0.12); color:var(--gold-light); border:1px solid rgba(201,168,76,0.3); }
 .audio-speed-btn { background:rgba(201,168,76,0.12); color:var(--gold-light); border:1px solid rgba(201,168,76,0.3); border-radius:14px; padding:6px 12px; font-size:12px; font-weight:700; cursor:pointer; flex-shrink:0; font-family:'Inter',sans-serif; }
 .audio-speed-btn:hover, .audio-btn-sm:hover { background:rgba(201,168,76,0.22); }
+.audio-continuous-btn { background:rgba(201,168,76,0.12); color:var(--muted); border:1px solid rgba(201,168,76,0.3); border-radius:14px; padding:6px 10px; font-size:13px; cursor:pointer; flex-shrink:0; opacity:0.55; transition:all 0.2s; }
+.audio-continuous-btn:hover { background:rgba(201,168,76,0.22); }
+.audio-continuous-btn.active { color:var(--gold-light); opacity:1; background:rgba(201,168,76,0.3); box-shadow:0 0 0 1px var(--gold); }
+.tts-word-active { background:rgba(201,168,76,0.35); border-radius:3px; box-shadow:0 0 0 2px rgba(201,168,76,0.35); transition:background 0.15s; }
+.tts-sentence-active { background:rgba(201,168,76,0.16); border-radius:4px; transition:background 0.2s; }
 .audio-info { flex:1; }
 .audio-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
 .audio-bar { height:4px; background:rgba(201,168,76,0.15); border-radius:2px; overflow:hidden; }
@@ -466,6 +471,7 @@ footer { background:var(--deep); border-top:1px solid rgba(201,168,76,0.1); padd
         <div class="audio-status" id="audioStatus">Ready</div>
       </div>
       <button class="audio-speed-btn" id="speedBtn" onclick="cycleSpeed()" title="Playback speed">1x</button>
+      <button class="audio-continuous-btn" id="continuousBtn" onclick="toggleContinuous()" title="Continuous play — auto-advance to next chapter">🔁</button>
     </div>
     <div class="reader-body" id="rBody"></div>
   </div>
@@ -3462,6 +3468,9 @@ const introBody = `<div class="scripture-box"><p>"He chose us in Him before the 
 
 // ─── AUDIO STATE ───
 let isPlaying = false, chunks = [], chunkIndex = 0, currentText = '', audioRate = 0.92;
+let continuousPlay = false, currentLi = null, currentCi = null, currentReaderKind = null;
+let chunkWordSpans = []; // arrays of {el, start, end} per chunk, for word-level highlighting
+let ttsWordBoundarySupported = true;
 
 // ─── PAYMENT CONSTANTS ───
 const FORMSPREE = 'https://formspree.io/f/xvznekyo';
@@ -3808,7 +3817,8 @@ function openReader(ch, li, ci) {
   document.getElementById('rCh').textContent = `Layer ${layers[li].num} · Chapter ${ch.num} of 40`;
   document.getElementById('rTitle').textContent = ch.title;
   document.getElementById('rBody').innerHTML = (ch.body || '<p>Content loading...</p>') + renderNoteBox(ch.num);
-  currentText = document.getElementById('rBody').innerText;
+  currentReaderKind = 'chapter'; currentLi = li; currentCi = ci;
+  prepareTTSStructure();
   stopAudio();
   document.getElementById('audioFill').style.width = '0%';
   document.getElementById('audioStatus').textContent = 'Ready';
@@ -3836,7 +3846,8 @@ function openConclusion() {
   document.getElementById('rCh').textContent = `Conclusion`;
   document.getElementById('rTitle').textContent = 'Welcome Home';
   document.getElementById('rBody').innerHTML = conclusionBody + renderNoteBox('conclusion');
-  currentText = document.getElementById('rBody').innerText;
+  currentReaderKind = 'conclusion'; currentLi = null; currentCi = null;
+  prepareTTSStructure();
   stopAudio();
   document.getElementById('audioFill').style.width = '0%';
   document.getElementById('audioStatus').textContent = 'Ready';
@@ -3847,7 +3858,8 @@ function openIntroduction() {
   document.getElementById('rCh').textContent = `Introduction`;
   document.getElementById('rTitle').textContent = 'Before You Begin — Know the God You Are United With';
   document.getElementById('rBody').innerHTML = introBody + renderNoteBox('intro');
-  currentText = document.getElementById('rBody').innerText;
+  currentReaderKind = 'intro'; currentLi = null; currentCi = null;
+  prepareTTSStructure();
   stopAudio();
   document.getElementById('audioFill').style.width = '0%';
   document.getElementById('audioStatus').textContent = 'Ready';
@@ -4060,6 +4072,120 @@ function selectTF(qi, val, answer, explain) {
 }
 
 // ─── AUDIO ───
+
+// Wrap every word in #rBody with a <span class="tts-w"> so we can highlight
+// individual words as they're spoken. Also groups words into sentence
+// "chunks" (same chunking the speech engine reads one at a time) and stores,
+// per chunk, which word-spans belong to it — so onboundary events can find
+// and highlight the right word regardless of playback rate or voice.
+function prepareTTSStructure() {
+  const rBodyEl = document.getElementById('rBody');
+  const SKIP_TAGS = new Set(['TEXTAREA', 'SCRIPT', 'STYLE', 'INPUT', 'SELECT', 'BUTTON']);
+  const walker = document.createTreeWalker(rBodyEl, NodeFilter.SHOW_TEXT, {
+    acceptNode(n) {
+      let p = n.parentElement;
+      while (p && p !== rBodyEl) {
+        if (SKIP_TAGS.has(p.tagName)) return NodeFilter.FILTER_REJECT;
+        p = p.parentElement;
+      }
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const textNodes = [];
+  let node;
+  while (node = walker.nextNode()) textNodes.push(node);
+
+  let wordIdx = 0;
+  const wordSpanEls = [];
+  textNodes.forEach(tn => {
+    const text = tn.textContent;
+    const tokens = text.match(/\S+|\s+/g);
+    if (!tokens) return;
+    const frag = document.createDocumentFragment();
+    tokens.forEach(tok => {
+      if (/\S/.test(tok)) {
+        const span = document.createElement('span');
+        span.className = 'tts-w';
+        span.dataset.idx = wordIdx++;
+        span.textContent = tok;
+        wordSpanEls.push(span);
+        frag.appendChild(span);
+      } else {
+        frag.appendChild(document.createTextNode(tok));
+      }
+    });
+    tn.parentNode.replaceChild(frag, tn);
+  });
+
+  // Group words into sentence chunks (word-based, so it stays perfectly
+  // aligned with the wrapped spans — no char-offset drift).
+  const rawChunks = [];
+  let cur = [];
+  wordSpanEls.forEach(span => {
+    cur.push(span);
+    if (/[.!?]["')\]]*$/.test(span.textContent)) { rawChunks.push(cur); cur = []; }
+  });
+  if (cur.length) rawChunks.push(cur);
+
+  chunks = rawChunks.map(spans => spans.map(s => s.textContent).join(' '));
+  chunkWordSpans = rawChunks;
+  currentText = wordSpanEls.map(s => s.textContent).join(' ');
+}
+
+function clearWordHighlight() {
+  document.querySelectorAll('.tts-word-active').forEach(el => el.classList.remove('tts-word-active'));
+}
+function clearChunkHighlight(chunkIdx) {
+  const spans = chunkWordSpans[chunkIdx];
+  if (!spans) return;
+  spans.forEach(s => s.classList.remove('tts-word-active', 'tts-sentence-active'));
+}
+function clearAllTTSHighlights() {
+  document.querySelectorAll('.tts-word-active, .tts-sentence-active').forEach(el => {
+    el.classList.remove('tts-word-active', 'tts-sentence-active');
+  });
+}
+function highlightWordAtCharIndex(chunkIdx, charIndex) {
+  const spans = chunkWordSpans[chunkIdx];
+  if (!spans || !spans.length) return;
+  let pos = 0, targetI = 0;
+  for (let i = 0; i < spans.length; i++) {
+    const wlen = spans[i].textContent.length;
+    if (charIndex < pos + wlen + 1) { targetI = i; break; }
+    pos += wlen + 1;
+    targetI = i;
+  }
+  clearWordHighlight();
+  spans[targetI].classList.add('tts-word-active');
+  spans[targetI].scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+
+function toggleContinuous() {
+  continuousPlay = !continuousPlay;
+  document.getElementById('continuousBtn').classList.toggle('active', continuousPlay);
+}
+
+// Finds the next chapter after the one currently open, respecting access
+// gating. Returns { type:'chapter', ch, li, ci } | { type:'conclusion' } | null
+function getNextReaderTarget() {
+  if (currentReaderKind === 'intro') {
+    if (layers[0] && layers[0].chapters[0]) return { type: 'chapter', ch: layers[0].chapters[0], li: 0, ci: 0 };
+    return null;
+  }
+  if (currentReaderKind === 'chapter' && currentLi !== null && currentCi !== null) {
+    const layer = layers[currentLi];
+    if (currentCi + 1 < layer.chapters.length) {
+      return { type: 'chapter', ch: layer.chapters[currentCi + 1], li: currentLi, ci: currentCi + 1 };
+    }
+    if (currentLi + 1 < layers.length) {
+      const nextLayer = layers[currentLi + 1];
+      return { type: 'chapter', ch: nextLayer.chapters[0], li: currentLi + 1, ci: 0 };
+    }
+    return { type: 'conclusion' };
+  }
+  return null;
+}
+
 function toggleAudio() {
   if (!currentText) return;
   const rBodyEl = document.getElementById('rBody');
@@ -4087,7 +4213,7 @@ function toggleAudio() {
 }
 function startReading() {
   window.speechSynthesis.cancel();
-  chunks = currentText.match(/[^.!?]+[.!?]+/g) || [currentText];
+  clearAllTTSHighlights();
   chunkIndex = 0; isPlaying = true;
   document.getElementById('audioBtn').textContent = '⏸';
   document.getElementById('miniBtn').textContent = '⏸';
@@ -4095,16 +4221,10 @@ function startReading() {
   speakChunk();
 }
 function startReadingFrom(selectedText) {
-  chunks = currentText.match(/[^.!?]+[.!?]+/g) || [currentText];
-  const charPos = currentText.indexOf(selectedText);
-  let startChunk = 0;
-  if (charPos !== -1) {
-    let cum = 0;
-    for (let i = 0; i < chunks.length; i++) {
-      cum += chunks[i].length;
-      if (cum > charPos) { startChunk = i; break; }
-    }
-  }
+  clearAllTTSHighlights();
+  const needle = selectedText.toLowerCase();
+  let startChunk = chunks.findIndex(c => c.toLowerCase().includes(needle));
+  if (startChunk === -1) startChunk = 0;
   chunkIndex = startChunk; isPlaying = true;
   document.getElementById('audioBtn').textContent = '⏸';
   document.getElementById('miniBtn').textContent = '⏸';
@@ -4119,15 +4239,55 @@ function speakChunk() {
       document.getElementById('audioBtn').textContent = '▶';
       document.getElementById('miniBtn').textContent = '▶';
       isPlaying = false;
+      clearAllTTSHighlights();
+
+      if (continuousPlay) {
+        const next = getNextReaderTarget();
+        if (next && next.type === 'chapter' && hasFullAccess(next.ch)) {
+          setTimeout(() => {
+            openReader(next.ch, next.li, next.ci);
+            startReading();
+          }, 900);
+        } else if (next && next.type === 'conclusion') {
+          setTimeout(() => {
+            openConclusion();
+            startReading();
+          }, 900);
+        }
+        // If next chapter is locked, continuous play simply stops here —
+        // never auto-bypasses the paywall.
+      }
     }
     return;
   }
-  const u = new SpeechSynthesisUtterance(chunks[chunkIndex]);
+  const thisChunkIdx = chunkIndex;
+  const u = new SpeechSynthesisUtterance(chunks[thisChunkIdx]);
   u.rate = audioRate; u.pitch = 1.0; u.volume = 1.0;
   const voices = window.speechSynthesis.getVoices();
   const v = voices.find(v => v.lang === 'en-ZA' || v.name.includes('Google') || v.lang === 'en-US');
   if (v) u.voice = v;
+
+  let wordBoundaryFired = false;
+  const fallbackTimer = setTimeout(() => {
+    if (!wordBoundaryFired) {
+      // This engine/browser isn't firing word boundaries (e.g. some Safari
+      // versions) — fall back to highlighting the whole sentence instead.
+      const spans = chunkWordSpans[thisChunkIdx];
+      if (spans) {
+        spans.forEach(s => s.classList.add('tts-sentence-active'));
+        if (spans[0]) spans[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+    }
+  }, 250);
+
+  u.onboundary = (event) => {
+    if (event.name && event.name !== 'word') return;
+    wordBoundaryFired = true;
+    highlightWordAtCharIndex(thisChunkIdx, event.charIndex);
+  };
   u.onend = () => {
+    clearTimeout(fallbackTimer);
+    clearChunkHighlight(thisChunkIdx);
     chunkIndex++;
     const pct = Math.round((chunkIndex / chunks.length) * 100);
     document.getElementById('audioFill').style.width = pct + '%';
@@ -4139,6 +4299,7 @@ function speakChunk() {
 function skipAudio(n) {
   if (!chunks.length) return;
   window.speechSynthesis.cancel();
+  clearAllTTSHighlights();
   chunkIndex = Math.max(0, Math.min(chunks.length - 1, chunkIndex + n));
   const pct = Math.round((chunkIndex / chunks.length) * 100);
   document.getElementById('audioFill').style.width = pct + '%';
@@ -4171,6 +4332,7 @@ function stopAudioUI() {
 }
 function stopAudio() {
   window.speechSynthesis.cancel(); isPlaying = false; chunkIndex = 0;
+  clearAllTTSHighlights();
   document.getElementById('audioBtn').textContent = '▶';
   document.getElementById('miniBtn').textContent = '▶';
 }
