@@ -152,6 +152,10 @@ body { background:var(--deep); color:var(--cream); font-family:'Inter',sans-seri
 .ch-item:last-child { border-bottom:none; }
 .ch-item:hover { background:rgba(201,168,76,0.04); }
 .ch-num { font-family:'Cinzel',serif; font-size:11px; color:var(--gold-dark); min-width:38px; font-weight:600; letter-spacing:1px; padding-top:2px; }
+.stone-chip { display:inline-flex; align-items:center; gap:4px; background:linear-gradient(135deg,#3a2f14,#1f1a0c); border:1px solid var(--gold-dark); border-radius:40% 45% 42% 48%/48% 42% 48% 42%; padding:2px 8px 2px 6px; font-family:'Cinzel',serif; font-size:9px; letter-spacing:0.5px; color:var(--gold-light); white-space:nowrap; margin-top:3px; }
+.stone-chip-icon { font-size:10px; }
+.reader-stone { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,#3a2f14,#1f1a0c); border:1px solid var(--gold-dark); border-radius:42% 46% 40% 48%/46% 40% 48% 42%; padding:4px 12px 4px 8px; font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--gold-light); margin-top:6px; }
+.reader-stone-icon { font-size:13px; }
 .ch-info { flex:1; }
 .ch-title { font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--cream); margin-bottom:3px; font-weight:600; }
 .ch-verse { font-size:11px; color:var(--muted); font-style:italic; }
@@ -901,6 +905,7 @@ const layers = [
 <p>Now — pick up your five stones. Let us begin.</p>`,
     chapters:[
       { num:6, title:'Everything Was Given Before You Asked', verse:'2 Peter 1:3-4 | Hebrews 3:19 | 1 Samuel 17:40', free:true,
+        stone:{ num:'1', of:5, label:'Given' },
         body:`<div class="scripture-box"><p>"According as His divine power hath given unto us all things that pertain unto life and godliness, through the knowledge of Him that hath called us to glory and virtue. Whereby are"</p><div class="scripture-ref">given unto us exceeding great and precious promises." — 2 Peter 1:3-4</div></div>
 <p class="drop-cap-p">The most dangerous word in the economy of religion is the word earn.</p>
 <p>Religion says: perform enough, sacrifice enough, be disciplined enough, pray long enough — and eventually God will give you what you need. Religion places the burden of acquisition on the human being. It turns the throne room into a merit system. It transforms the Father's house into a courtroom where the verdict depends on your record. But the Apostle Peter — the businessman, the fisherman, the number cruncher who knows the difference between addition and multiplication — does not use the word earn anywhere in 2 Peter 1:2-4.</p>
@@ -931,6 +936,7 @@ const layers = [
           ]}
       },
       { num:7, title:'Know + Ledger: The Account That Changes Everything', verse:'2 Peter 1:2-3 | Philippians 3:10 | Hosea 4:6', free:false,
+        stone:{ num:'2', of:5, label:'Knowledge' },
         body:`<div class="scripture-box"><p>"Grace and peace be multiplied unto you through the knowledge of God, and of Jesus our"</p><div class="scripture-ref">Lord... through the knowledge of Him that hath called us to glory and virtue." — 2 Peter 1:2-3</div></div>
 <p class="drop-cap-p">I hold a CIMA certificate in Business Administration. And one of the gifts that business training gives you — whether you intend it or not — is the ability to see financial architecture in places where others see only words.</p>
 <p>When I read 2 Peter 1:2-3 and the Apostle Peter uses the word knowledge — not once but twice in two consecutive verses — the accountant in me comes alive.</p>
@@ -965,6 +971,7 @@ const layers = [
           ]}
       },
       { num:8, title:'The Breath of Omnipotence Inside You', verse:'2 Peter 1:3 | Genesis 2:7 | John 4:24', free:false,
+        stone:{ num:'3', of:5, label:'Divine Power' },
         body:`<div class="scripture-box"><p>"According as His divine power hath given unto us all things that pertain unto life and"</p><div class="scripture-ref">godliness." — 2 Peter 1:3</div></div>
 <p class="drop-cap-p">Divine power.</p>
 <p>Two words that contain the answer to every "I cannot" you have ever spoken about yourself. Two words that dismantle every ceiling that religion, culture, failure and the enemy's lies have placed over your life. Two words that — when entered into the ledger of your inner man through the knowledge of Christ — permanently alter your understanding of what is possible for a human being who is in Union with God.</p>
@@ -1003,6 +1010,7 @@ const layers = [
           ]}
       },
       { num:9, title:'Partakers: The Most Audacious Word in Scripture', verse:'2 Peter 1:4 | 1 Corinthians 3:16 | Colossians 1:27', free:false,
+        stone:{ num:'4–5', of:5, label:'Divine Nature · Partakers' },
         body:`<div class="scripture-box"><p>"Whereby are given unto us exceeding great and precious promises: that by these ye might be partakers of the divine nature, having escaped the corruption that is in the world through"</p><div class="scripture-ref">lust." — 2 Peter 1:4</div></div>
 <p class="drop-cap-p">I want you to stop at one word in this verse.</p>
 <p>Not "divine." Not "nature." Not "promises."</p>
@@ -1020,6 +1028,13 @@ const layers = [
 <p>The centre arc is not equal to the three outer arcs. The centre arc did not create itself. The centre arc only exists because the three came together and made space for it. But the centre arc is there. Enclosed. Held. Surrounded. Participating in the form of the three — bearing their likeness, visible only because of their Union.</p>
 <p>That is what it means to be partakers of the divine nature.</p>
 <p>Not the three outer arcs. But the centre arc — held in their Union, shaped by their nature, existing because they chose to include us.</p>
+<h3>What the Divine Nature Actually Is (and Isn't)</h3>
+<p>Before we go further, let us be precise — because precision protects doctrine, and doctrine protects the soul.</p>
+<p>The Greek word behind "nature" in 2 Peter 1:4 is physis. It does not mean God's uncreated, self-existent essence — the "God-ness" that belongs to Him alone. It means the inward disposition, the moral and relational character that flows out of who God is. When Peter says we become partakers of the divine nature, he is not saying we absorb God's omnipresence, His self-existence, or His deity. He is saying that the very disposition of God — His holiness, His faithfulness, His love, His creative wisdom — is imparted to us, planted in us, and begins to grow as our own.</p>
+<p>This is the difference between Stone 3 and Stone 4. Divine Power is what God gives us — provision, ability, all things pertaining to life and godliness. Divine Nature is who God makes us — a people whose inward disposition begins, by grace, to resemble His own.</p>
+<p>A son does not become his father by inheriting his father's bank account. He becomes like his father by inheriting his father's nature — the family likeness, temperament and character passed down in the blood. That is closer to what Peter means. We do not inherit God's deity. We inherit — by grace, through the promises of 2 Peter 1:4 — the family resemblance of the One who adopted us.</p>
+<div class="lightup-box"><div class="lightup-label">🔦 Light Up Moment</div><p> The divine nature is not a title you wear. It is a disposition you carry — quietly reshaping how you love, how you forgive, how you create, how you govern — until the family resemblance becomes unmistakable.</p></div>
+<p>That is the fourth stone.</p>
 <h3>The Four Dimensions — Now Applied to Partakers</h3>
 <p>In Chapter 8 we celebrated The Four Dimensions of the Divinity of God. Now I want to show you something that will take your breath away.</p>
 <p>God, in His infinite generosity, did not keep those four dimensions locked exclusively within the Trinity. Through the exceeding great and precious promises of 2 Peter 1:4 — and through the divine power of 2 Peter 1:3 — He found a way to allow the human being to partake of each dimension.</p>
@@ -1031,8 +1046,7 @@ const layers = [
 <p>God found a way to make us expressions of His love: "We love because He first loved us." (1 John 4:19)</p>
 <p>We are not the source of Spirit, Light and Love. But we are partakers — carriers, expressions, reflections — of the God whose essence is Spirit, Light and Love.</p>
 <h3>Partaking in God's Attributes — His Character</h3>
-<h3>God's attributes include omnipotence, omniscience, holiness, faithfulness, mercy and</h3>
-<p>creative capacity.</p>
+<p>God's attributes include omnipotence, omniscience, holiness, faithfulness, mercy and creative capacity.</p>
 <p>God found a way to give us participation in His creative capacity — no other creature on earth creates the way the human being creates. We build cities, write symphonies, compose poetry, design systems. This is not accidental evolution. This is the demuth — the likeness — of the Creator expressed through the creature who was made in His image. God found a way to give us participation in His governing wisdom — "The Spirit searches all things, even the deep things of God... we have the mind of Christ." (1 Corinthians 2:10, 16)</p>
 <p>God found a way to give us participation in His holiness — "As He who called you is holy, you also be holy in all your conduct." (1 Peter 1:15)</p>
 <p>We are not omnipotent, omniscient or infinitely holy. But we are partakers — participating, through the divine nature, in the character of the God whose attributes are holy, faithful, just and merciful.</p>
@@ -1077,6 +1091,7 @@ const layers = [
           ]}
       },
       { num:10, title:'Governing From The Inside Out', verse:'2 Peter 1:4 | Genesis 1:28 | Romans 8:19', free:false,
+        stone:{ num:'✓', of:5, label:'Five Stones, Completed' },
         body:`<div class="scripture-box"><p>"Whereby are given unto us exceeding great and precious promises: that by these ye might be partakers of the divine nature, having escaped the corruption that is in the world through"</p><div class="scripture-ref">lust." — 2 Peter 1:4</div></div>
 <p class="drop-cap-p">The fifth stone. The final chapter of Layer 2. And perhaps the most practical of all five — because this is where everything we have celebrated lands on the earth.</p>
 <p>We have celebrated that everything pertaining to life and godliness has been given (Chapter 6). We have celebrated that knowledge of Christ unlocks exponential access to what was given (Chapter 7). We have celebrated that divine power — flowing from all four dimensions of God's divinity — is the source of everything given and the breath that made the difference (Chapter 8). We have celebrated that we are partakers of the divine nature — participating in God's essence, attributes, deity and economy — the centre arc of the Triquetra, God's address on earth (Chapter 9).</p>
@@ -3900,7 +3915,7 @@ function buildLayers() {
       const item = document.createElement('div');
       item.className = 'ch-item';
       item.innerHTML = `
-        <div class="ch-num">Ch.${ch.num}</div>
+        <div class="ch-num">Ch.${ch.num}${ch.stone ? `<div class="stone-chip"><span class="stone-chip-icon">💎</span>Stone ${ch.stone.num}</div>` : ''}</div>
         <div class="ch-info">
           <div class="ch-title">${ch.title}</div>
           <div class="ch-verse">${ch.verse}</div>
@@ -3985,6 +4000,14 @@ function saveQuickNote(key) {
 function openReader(ch, li, ci) {
   document.getElementById('rCh').textContent = `Layer ${layers[li].num} · Chapter ${ch.num} of 40`;
   document.getElementById('rTitle').textContent = ch.title;
+  const stoneHtml = ch.stone
+    ? `<div class="reader-stone"><span class="reader-stone-icon">💎</span>Stone ${ch.stone.num} of ${ch.stone.of} — ${ch.stone.label}</div>`
+    : '';
+  const existingStone = document.getElementById('rStone');
+  if (existingStone) existingStone.remove();
+  if (stoneHtml) {
+    document.getElementById('rTitle').insertAdjacentHTML('afterend', `<div id="rStone">${stoneHtml}</div>`);
+  }
   let bridgeCTA = '';
   if (ci === layers[li].chapters.length - 1 && li + 1 < layers.length) {
     const nextLayer = layers[li + 1];
