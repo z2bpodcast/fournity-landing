@@ -251,6 +251,13 @@ body { background:var(--deep); color:var(--cream); font-family:'Inter',sans-seri
 .dd-ref strong { color:var(--gold-light); }
 .workbook-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.25); color:var(--gold); padding:10px 20px; border-radius:3px; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; margin-top:8px; transition:all 0.2s; font-family:'Inter',sans-serif; }
 .workbook-btn:hover { background:rgba(201,168,76,0.18); }
+.phase-card { background:rgba(201,168,76,0.06); border-left:3px solid var(--gold-dark); border-radius:2px; padding:14px 16px; margin-bottom:12px; }
+.phase-num { font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--gold); text-transform:uppercase; font-weight:700; margin-bottom:6px; }
+.phase-verse { font-style:italic; color:#D8D0C0; font-size:14px; margin:6px 0; display:block; }
+.phase-note { color:#C8C8D0; font-size:14px; margin:0; }
+.oicav-list { list-style:none; margin:0 0 20px; padding:0; }
+.oicav-list li { background:rgba(255,255,255,0.03); border-left:3px solid var(--gold-dark); border-radius:2px; padding:10px 14px; margin-bottom:8px; font-size:14px; color:#D8D0C0; }
+.oicav-list li strong { color:var(--gold); }
 .posters-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.25); color:var(--gold); padding:10px 20px; border-radius:3px; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; margin-top:8px; margin-left:8px; transition:all 0.2s; font-family:'Inter',sans-serif; }
 .posters-btn:hover { background:rgba(201,168,76,0.18); }
 .poster-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:16px; padding:20px; }
@@ -358,6 +365,10 @@ footer { background:var(--deep); border-top:1px solid rgba(201,168,76,0.1); padd
       <div class="err" id="gateErr"></div>
       <div class="field"><label>Full Name</label><input type="text" id="gateName" placeholder="Your name" /></div>
       <div class="field"><label>Email Address</label><input type="email" id="gateEmail" placeholder="your@email.com" /></div>
+      <label style="display:flex;align-items:flex-start;gap:8px;margin:10px 0 4px;font-size:13px;color:#D8D0C0;text-transform:none;letter-spacing:normal;">
+        <input type="checkbox" id="gateReviewerCheck" style="margin-top:2px;width:auto;">
+        <span>I want to be a <strong>FOURNITY Book Reviewer</strong> (earn 20% per sale + unlock chapters)</span>
+      </label>
       <button class="btn-gold" id="gateBtn" onclick="submitGate()">Read Free Preview →</button>
       <div class="privacy">Your information is safe. No spam — only Kingdom content.</div>
     </div>
@@ -379,6 +390,10 @@ footer { background:var(--deep); border-top:1px solid rgba(201,168,76,0.1); padd
   <div class="hero-btns">
     <button class="btn-primary" id="heroReadBtn" onclick="document.getElementById('flipbook').scrollIntoView({behavior:'smooth'})">Read Free Chapters</button>
     <button class="btn-outline" id="heroPreOrderBtn" onclick="openLocked()">Pre-Order Now — R350</button>
+  </div>
+  <div style="margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+    <button onclick="openMyReferralLink()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);font-size:12px;letter-spacing:0.5px;padding:9px 18px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">🔗 My Referral Link</button>
+    <button onclick="openReviewerWelcome()" style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.35);color:#2ECC71;font-size:12px;letter-spacing:0.5px;padding:9px 18px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">🎬 Become a Book Reviewer — Earn 20%</button>
   </div>
   <div class="scroll-hint">Scroll to explore</div>
 </section>
@@ -607,6 +622,29 @@ const AUTHOR_EMAILS = ['blessedmokoro@gmail.com'];
 // ─── PAID ACCESS ───
 // Checked against real completed orders in Supabase — this is what actually unlocks the book for paying readers.
 window.FOURNITY_PAID_ACCESS = false;
+
+// ─── REVIEWER CHAPTER UNLOCKS ───
+// Chapters manually unlocked for a specific reviewer email, after Rev confirms
+// their social media review submission. See fournity_reviewer_unlocks table.
+window.FOURNITY_UNLOCKED_CHAPTERS = new Set();
+async function checkReviewerUnlocks() {
+  const email = getCurrentEmail();
+  if (!email) return;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/fournity_reviewer_unlocks?email=eq.${encodeURIComponent(email)}&select=chapter_num`,
+      { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
+    );
+    const rows = await res.json();
+    if (Array.isArray(rows) && rows.length) {
+      rows.forEach(r => window.FOURNITY_UNLOCKED_CHAPTERS.add(r.chapter_num));
+      buildLayers(); // re-render so the newly unlocked chapter shows as readable
+    }
+  } catch (e) {
+    // Fails silently — reviewer simply sees their normal access if the check can't complete
+  }
+}
+
 function getCurrentEmail() {
   const params = new URLSearchParams(window.location.search);
   const fromUrl = (params.get('email') || '').toLowerCase().trim();
@@ -615,6 +653,82 @@ function getCurrentEmail() {
     const saved = JSON.parse(localStorage.getItem('fournity_registered') || '{}');
     return (saved.email || '').toLowerCase().trim();
   } catch (e) { return ''; }
+}
+
+// ─── FOURNITY AFFILIATE SYSTEM ───
+// Every registered reader gets their own referral code automatically.
+function captureReferralCode() {
+  const params = new URLSearchParams(window.location.search);
+  const ref = (params.get('ref') || '').trim();
+  if (ref) {
+    localStorage.setItem('fournity_referred_by', ref);
+  }
+}
+function getReferredBy() {
+  return localStorage.getItem('fournity_referred_by') || '';
+}
+function generateRefCode(name) {
+  const clean = (name || 'READER').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6) || 'FN';
+  const rand = Math.floor(1000 + Math.random() * 9000);
+  return clean + rand;
+}
+async function createAffiliate(name, email, isReviewer) {
+  const refCode = generateRefCode(name);
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/fournity_affiliates', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ name, email, ref_code: refCode, is_reviewer: !!isReviewer })
+    });
+    if (res.ok) {
+      localStorage.setItem('fournity_my_ref_code', refCode);
+      return refCode;
+    }
+    // If the code collided (unique constraint), try once more with a fresh random suffix
+    const retryCode = generateRefCode(name);
+    const retryRes = await fetch(SUPABASE_URL + '/rest/v1/fournity_affiliates', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ name, email, ref_code: retryCode, is_reviewer: !!isReviewer })
+    });
+    if (retryRes.ok) {
+      localStorage.setItem('fournity_my_ref_code', retryCode);
+      return retryCode;
+    }
+  } catch (e) { /* fails silently */ }
+  return '';
+}
+function getMyRefCode() {
+  return localStorage.getItem('fournity_my_ref_code') || '';
+}
+function getMyRefLink() {
+  const code = getMyRefCode();
+  if (!code) return '';
+  return 'https://fournity.co.za/read.html?ref=' + code;
+}
+function logReferralEvent(eventType, buyerName, buyerEmail) {
+  const refCode = getReferredBy();
+  if (!refCode) return;
+  fetch(SUPABASE_URL + '/rest/v1/fournity_referral_events', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({ ref_code: refCode, buyer_name: buyerName || '', buyer_email: buyerEmail || '', event_type: eventType })
+  }).catch(() => {});
 }
 async function checkPaidAccess() {
   const email = getCurrentEmail();
@@ -666,6 +780,7 @@ function updateHeroCTA() {
 function hasFullAccess(ch) {
   if (ch.free) return true;
   if (window.FOURNITY_PAID_ACCESS) return true;
+  if (window.FOURNITY_UNLOCKED_CHAPTERS && window.FOURNITY_UNLOCKED_CHAPTERS.has(ch.num)) return true;
   const currentEmail = getCurrentEmail();
   if (currentEmail && AUTHOR_EMAILS.includes(currentEmail)) return true;
   return false;
@@ -2630,9 +2745,10 @@ const layers = [
           { ref:'John 12:31', notes:['"Now will the ruler of this world be cast out" — the cross beginning the legal eviction process, not just saving souls.'] },
           { ref:'Revelation 11:15', notes:['"The kingdom of the world has become the kingdom of our Lord" — the culmination of the eviction Calvary began.'] },
           { ref:'Revelation 5:9-10', notes:['The scroll — widely understood as the earth\'s title deed — opened by the only One found worthy. "They shall reign on the earth."'] },
-          { ref:'Ephesians 1:13-14', notes:['"Sealed with the Holy Spirit of promise... the earnest of our inheritance" — the deposit guaranteeing the full title deed still to come.'] },
+          { ref:'Luke 22:29-30', notes:['Phase 1, The Promise. Jesus\' own words the night before His arrest — "I confer on you a kingdom... that you may sit on thrones." A throne, promised by the King Himself.'] },
+          { ref:'Revelation 3:21', notes:['Phase 5, The Consummation. "To him who overcomes I will grant to sit with Me on My throne" — the future, undisputed, fully visible form of what is already true in position.'] },
           { ref:'Romans 8:17', notes:['"Heirs of God, and joint-heirs with Christ" — the legal standing behind the phrase "your name is on it."'] },
-          { ref:'Galatians 4:7', notes:['"An heir of God through Christ" — no longer a servant managing someone else\'s property, but an heir with a name on the deed.'] }
+          { ref:'Revelation 1:5-6', notes:['Phase 4, The Praise and Worship. "Made us a kingdom, priests to his God and Father — to him be glory and dominion forever" — the only right response to reigning: doxology, not pride.'] }
         ],
         body:`<div class="scripture-box"><p>"The earth is the Lord's and the fullness thereof, the world and those who dwell in it."</p><div class="scripture-ref">Psalm</div></div>
 <p class="drop-cap-p">24:1</p>
@@ -2680,6 +2796,72 @@ const layers = [
 <p>"They shall reign on the earth."</p>
 <p>The redeemed — the ransomed, the blood-bought, the co-raised and co-seated — are made a kingdom and priests. Governing and interceding. Reigning on the earth as the restored stewards of God's creation, under the authority of the Lamb who opened the title deed with His own blood.</p>
 <p>Your name is on that title deed. Not because you earned the right to be there — but because the blood of the Lamb put it there. The blood that ransomed you also reinstated you. The blood that forgave you also repositioned you. The blood that saved you also restored your name to the documents of governance.</p>
+
+<h3>Reigning In Life Through Christ: Five Phases, One Testimony</h3>
+<p>One of the many lessons I carry from my Rhema Bible School ministerial training is this: always allow Scripture to interpret Scripture before you ever move to application. A truth this large — that you and I are called to reign in life through Christ — should never rest on a single verse pulled from its context and stretched further than it was ever meant to go. So before I ask what this means for how you live, let me show you that this is not one man's reading of one verse. This is Scripture's own united testimony, unfolding in five distinct phases, each carried by a different witness.</p>
+
+<div class="phase-card">
+<div class="phase-num">Phase 1 — The Promise — Jesus</div>
+<span class="phase-verse">"I confer on you a kingdom, just as My Father conferred one on Me, so that you may eat and drink at My table in My kingdom, and sit on thrones." — Luke 22:29-30</span>
+<p class="phase-note">The night before His arrest, Jesus Himself made the first promise. Not Paul's theology. Not Peter's encouragement. Jesus, in His own voice, promising a throne.</p>
+</div>
+
+<div class="phase-card">
+<div class="phase-num">Phase 2 — The Present-Day Experience — Paul</div>
+<span class="phase-verse">"Those who receive the abundance of grace and the gift of righteousness will reign in life through the one man Jesus Christ." — Romans 5:17</span>
+<span class="phase-verse">"...raised us up together, and made us sit together in the heavenly places in Christ Jesus." — Ephesians 2:6</span>
+<p class="phase-note">Paul takes the promise and locates it in the present tense — not someday, but now, for anyone who receives grace.</p>
+</div>
+
+<div class="phase-card">
+<div class="phase-num">Phase 3 — The Identity — Peter</div>
+<span class="phase-verse">"But you are a chosen generation, a royal priesthood, a holy nation." — 1 Peter 2:9</span>
+<p class="phase-note">Writing to scattered, suffering believers who had every reason to feel small, Peter tells them plainly what they actually are. Not a hopeful nation. A royal one.</p>
+</div>
+
+<div class="phase-card">
+<div class="phase-num">Phase 4 — The Praise and Worship — John</div>
+<span class="phase-verse">"To him who loved us and released us from our sins by his blood, and made us a kingdom, priests to his God and Father — to him be glory and dominion forever and ever. Amen." — Revelation 1:5-6</span>
+<p class="phase-note">This is the phase I return to more than any other, because this is what FOURNITY has always been about. As the privileged author and messenger entrusted with this message, it is my daily prayer that everyone who receives it responds exactly the way John responded the moment he remembered what he had been made — not with pride, not with entitlement, but with worship.</p>
+<p class="phase-note">John shows us what this looks like in full in Revelation 4. The four living creatures never stop crying, "Holy, holy, holy, is the Lord God Almighty, who was and is and is to come" (Revelation 4:8). And every single time they cry it, the twenty-four elders fall down before Him who sits on the throne, casting their own crowns before the throne, declaring: "Worthy are You, our Lord and God, to receive glory and honor and power" (Revelation 4:10-11).</p>
+<p class="phase-note">Notice what the elders do with their crowns. They do not hold them tighter the more they are reminded of God's holiness. They throw them down. Every time. Because the crowns were never theirs to keep for their own glory — they were given so there would be something worth laying down before the only One actually worthy to wear a crown forever.</p>
+<p class="phase-note">This is the posture I want for every reader of FOURNITY, and the posture I try to walk in myself. We have been given real authority — a delegated position, a genuine reign, an actual crown. But delegated is not the same as owned. Governing is not the same as ruling apart from Him. The moment we forget the difference, reigning curdles into usurping, and confidence curdles into pride.</p>
+<p class="phase-note">Without God, we are nothing. God, and God alone, is our source. We did not create ourselves, we did not save ourselves, and we do not sustain ourselves. Whatever glory rests on us is not glory we manufactured — it is glory we reflect. We are, as Hebrews says of the Son Himself, only ever "the radiance of his glory" (Hebrews 1:3) — never the source of it. Every time we celebrate FOURNITY — every time we remember Father, Son, Holy Spirit, and the one they adopted — I want us to do exactly what the twenty-four elders do without fail: fall on our faces, throw back the crown, and declare, Worthy is He who sits on the throne.</p>
+</div>
+
+<div class="phase-card">
+<div class="phase-num">Phase 5 — The Consummation — John</div>
+<span class="phase-verse">"To him who overcomes I will grant to sit with Me on My throne." — Revelation 3:21</span>
+<span class="phase-verse">"...you have made them a kingdom and priests to our God, and they shall reign on the earth." — Revelation 5:9-10</span>
+<span class="phase-verse">"...they shall be priests of God and of Christ, and shall reign with Him." — Revelation 20:6</span>
+<p class="phase-note">Three times, John records the same reign brought to its fullest, final, most visible form — open, undisputed, complete.</p>
+</div>
+
+<p>Promise. Present experience. Identity. Worship. Consummation. Five phases, one unbroken testimony — a Lord who promised it, an apostle who lived it in the present tense, an apostle who named it as identity, and a beloved disciple who both worshipped because of it and saw where it finally leads.</p>
+
+<h3>The Five Hermeneutical Disciplines — OICAV</h3>
+<p>But naming the phases is not the same as understanding what each text is actually saying — and here is where sound handling of Scripture matters more than ever, because it would be easy to read Luke 22, Romans 5, and Revelation 3:21 side by side and assume they describe the same moment, the same audience, the same tense. They do not. To handle this rightly, I want to walk you through five disciplines every serious student of Scripture learns to apply, one after another, before drawing a conclusion.</p>
+
+<ul class="oicav-list">
+<li><strong>O — Exegesis (Observation).</strong> What does the text actually say? Not what I assume it says. Not what I have heard it means. What are the words on the page.</li>
+<li><strong>I — Hermeneutics (Interpretation).</strong> What did the author mean by it — to the people he was actually writing to, in the situation he was actually writing into?</li>
+<li><strong>C — Biblical Theology (Correlation).</strong> What do the other Scriptures say about this same subject? No verse stands alone in the counsel of God.</li>
+<li><strong>A — Systematic Theology (Verification).</strong> When I gather every relevant passage together, what does the whole of Scripture teach — not a fragment of it, but the complete doctrine?</li>
+<li><strong>V — Practical Theology (Homiletics/Application).</strong> How then should I live, and how should I teach this truth to others?</li>
+</ul>
+
+<h3>Applying the Five Disciplines — Three Texts, Three Tenses</h3>
+<p><strong>Observation.</strong> In Luke 22, Jesus is speaking directly to the Twelve, at the table, the night of His betrayal — a kingdom conferred, thrones promised. In Romans 5, Paul is writing to believers in Rome, describing something already available to "those who receive" — grace received, reigning in life as the result, present tense. In Revelation 3:21, John records Christ's own promise to "him who overcomes" — a future grant, tied to a condition still being fulfilled.</p>
+<p><strong>Interpretation.</strong> Jesus, in Luke 22, is promising the Twelve a unique apostolic role — sitting on thrones is language tied elsewhere to judging the twelve tribes of Israel, a specific commission for specific men. Paul, in Romans 5, is not writing to twelve apostles. He is writing to ordinary believers in a Roman church he had never even visited, telling them that reigning in life is what happens to anyone who receives grace — not a reward reserved for an inner circle. John, in Revelation 3:21, is writing to seven churches in Asia Minor, some faithful, some lukewarm — his promise is aimed at perseverance, at overcoming, at a future reward for present faithfulness.</p>
+<p><strong>Correlation.</strong> Once you start gathering the other voices, the picture widens further. Ephesians 2:6 says we are already seated with Christ. 1 Peter 2:9 says we are already a royal priesthood. Revelation 1:6 says we have already been made kings and priests, and answers that truth with worship rather than pride. Revelation 5:10 says the redeemed of every nation shall reign on the earth. Revelation 20:6 promises the redeemed "shall be priests of God and of Christ, and shall reign with Him." And the Old Testament had already anticipated all of it: Daniel records that "the saints of the Most High shall receive the kingdom" (Daniel 7:18), and again, that the kingdom "shall be given to the people, the saints of the Most High" (Daniel 7:27). James calls believers "heirs of the kingdom" (James 2:5). Hebrews describes humanity, in Christ, "crowned with glory and honor" (Hebrews 2:7-10). This is not a fragile doctrine hanging on one verse. It is a thread the Spirit wove through Daniel, through the Gospels, through Paul, through Peter, through James, through Hebrews, through Revelation.</p>
+<p><strong>Verification.</strong> Gathering all of this together, the whole counsel of Scripture teaches several things at once, and none of them contradict each other: the Twelve carry a unique apostolic calling that is theirs alone — thrones, judgment, a specific commission tied to Israel's twelve tribes (the Promise). Every believer shares universally in Christ's reign through union with Him, now, in the present tense (the Present-Day Experience). That reign is who we already are, not a title we are working toward (the Identity). The only right response to any of this is worship, not self-importance — the same posture as the twenty-four elders, crowns cast down before the throne (the Praise and Worship). And the fullest, most visible, most undisputed form of this reign is still ahead of us, promised to those who overcome (the Consummation). The doctrine of reigning with Christ is not built on any one of these phases alone. It is verified by all five, speaking with one voice through five witnesses.</p>
+<p><strong>Application.</strong> And so the question becomes: how then should I live? I live as one who already reigns through Christ — not someday, not once I qualify, but now, in life, through the abundance of grace already received. I carry that reign the way the twenty-four elders carry their crowns — ready to throw them back the instant I'm reminded who alone is holy. Not as a boast, but as a doxology, glory and dominion given back to the One who gave it to me. I exercise the stewardship of that kingdom with humility, not the arrogance of a title I earned, but the wonder of a gift I was given. And I walk daily as an overcomer, watching for the day when what is already true in position becomes undeniable in experience, before every eye, in every place.</p>
+
+<h3>Reconciling the Tenses — Already, But Not Yet</h3>
+<p>So how do we hold Luke 22's future thrones, Romans 5's present reign, and Revelation 3:21's promise to overcomers together, without contradiction? This is where the New Testament pattern theologians call "already, but not yet" becomes essential, and it resolves everything — and it maps precisely onto the five phases.</p>
+<p>Our <strong>present position</strong> is settled: we are seated with Christ, right now, in the heavenly places (Ephesians 2:6). Our <strong>present identity</strong> is settled: we are a royal priesthood, right now, not becoming one someday (1 Peter 2:9). Our <strong>present experience</strong> is available, right now: we reign in life through Christ, in this life, in this body, in this present tense (Romans 5:17) — and our only right response to any of it is worship (Revelation 1:6). Our <strong>future manifestation</strong> is promised, still to come in its fullness: the open, visible, undisputed reign that Luke 22 first promised, and Revelation 3:21, 5:10, and 20:6 all confirm — the day when what is already true in position becomes undeniable in experience, before every eye, in every place.</p>
+<p>There is no contradiction here. There is only a King who gave us our seat before He revealed our full inheritance — because that is exactly how Fournity works. Union comes first. Position comes first. Worship follows naturally. And the full manifestation of what is already true follows, in its time, exactly as He promised.</p>
+
 <h3 class="celebration-heading">The Celebration</h3>
 <p>The earth is the Lord's — and He gave it to you. Not to the enemy. Not to the systems of darkness. Not to the squatter who has been illegally occupying what was never his.</p>
 <p>To you.</p>
@@ -4292,6 +4474,7 @@ function showBankDetails() {
 
 async function confirmEftSubmitted() {
   const o = window._fournityOrder;
+  const refCode = getReferredBy();
   try {
     await fetch(FORMSPREE, {
       method: 'POST',
@@ -4301,21 +4484,25 @@ async function confirmEftSubmitted() {
         Type: 'EFT PAYMENT CLAIMED — VERIFY PROOF ON WHATSAPP',
         Name: o.name, Email: o.email, WhatsApp: o.whatsapp,
         'Delivery Address': o.address,
+        'Referred By': refCode || 'None (direct/organic)',
         Date: new Date().toLocaleString('en-ZA')
       })
     });
   } catch(e) {}
+  logReferralEvent('eft_claimed', o.name, o.email);
   document.getElementById('paymentMethodOverlay').classList.remove('open');
   showSuccess('EFT — Pending Verification', o.name);
 }
 
 function launchYoco(name, email) {
   const yoco = new window.YocoSDK({ publicKey: YOCO_KEY });
+  const refCode = getReferredBy();
   yoco.showPopup({
     amountInCents: 35000,
     currency: 'ZAR',
     name: 'FOURNITY — Pre-Order',
     description: 'Digital edition + Audio Reader + Workbook + Signed copy after printing',
+    metadata: { referred_by: refCode || 'none' },
     callback: async function(result) {
       if (result.error) {
         alert('Payment failed: ' + result.error.message);
@@ -4330,10 +4517,12 @@ function launchYoco(name, email) {
               Email: email, Name: name,
               'Payment Ref': result.id,
               Amount: 'R350',
+              'Referred By': refCode || 'None (direct/organic)',
               Date: new Date().toLocaleString('en-ZA')
             })
           });
         } catch(e) {}
+        logReferralEvent('yoco_paid', name, email);
         showSuccess(result.id, name);
       }
     }
@@ -4367,6 +4556,7 @@ function checkReturning() {
 function submitGate() {
   const name = document.getElementById('gateName').value.trim();
   const email = document.getElementById('gateEmail').value.trim();
+  const wantsReviewer = document.getElementById('gateReviewerCheck').checked;
   const errBox = document.getElementById('gateErr');
   errBox.textContent = '';
 
@@ -4384,11 +4574,51 @@ function submitGate() {
   localStorage.setItem('fournity_registered', JSON.stringify({ name, email, date: new Date().toISOString() }));
 
   // Save the lead to Supabase (fails silently if offline — local access still granted)
-  saveLead(name, email);
+  saveLead(name, email, wantsReviewer);
+
+  // Log that this signup came through someone else's referral link, if any
+  logReferralEvent('signup', name, email);
 
   document.getElementById('gate').classList.add('hidden');
+
+  // Every registered reader becomes an affiliate automatically
+  createAffiliate(name, email, wantsReviewer).then(() => {
+    if (wantsReviewer) {
+      openReviewerWelcome(name);
+    } else {
+      openMyReferralLink(name);
+    }
+  });
 }
-function saveLead(name, email) {
+function openReviewerWelcome(name) {
+  const nameEl = document.getElementById('reviewerWelcomeName');
+  if (nameEl) nameEl.textContent = 'Welcome, ' + (name || 'Book Reviewer') + '!';
+  const linkEl = document.getElementById('reviewerWelcomeLink');
+  if (linkEl) linkEl.textContent = getMyRefLink() || 'Your link is being generated...';
+  document.getElementById('reviewerWelcomeOverlay').classList.add('open');
+}
+function copyReviewerLink() {
+  const link = getMyRefLink();
+  if (!link) return;
+  navigator.clipboard.writeText(link);
+  const btn = document.getElementById('reviewerCopyBtn');
+  if (btn) { btn.textContent = '✓ Copied'; setTimeout(() => { btn.textContent = 'Copy'; }, 2000); }
+}
+function openMyReferralLink(name) {
+  const nameEl = document.getElementById('myRefLinkName');
+  if (nameEl) nameEl.textContent = 'Welcome, ' + (name || 'Reader') + '!';
+  const linkEl = document.getElementById('myRefLinkText');
+  if (linkEl) linkEl.textContent = getMyRefLink() || 'Your link is being generated...';
+  document.getElementById('myRefLinkOverlay').classList.add('open');
+}
+function copyMyRefLink() {
+  const link = getMyRefLink();
+  if (!link) return;
+  navigator.clipboard.writeText(link);
+  const btn = document.getElementById('myRefLinkCopyBtn');
+  if (btn) { btn.textContent = '✓ Copied'; setTimeout(() => { btn.textContent = 'Copy'; }, 2000); }
+}
+function saveLead(name, email, wantsReviewer) {
   if (typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') return;
   fetch(SUPABASE_URL + '/rest/v1/fournity_leads', {
     method: 'POST',
@@ -4398,7 +4628,7 @@ function saveLead(name, email) {
       'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
       'Prefer': 'return=minimal'
     },
-    body: JSON.stringify({ name: name, email: email, source: 'digital_book' })
+    body: JSON.stringify({ name: name, email: email, source: 'digital_book', wants_reviewer: !!wantsReviewer })
   }).catch(() => { /* fails silently, local access already granted */ });
 }
 
@@ -5274,12 +5504,14 @@ function closeMini() {
 
 // ─── INIT ───
 window.onload = function() {
+  captureReferralCode();
   buildIdentity();
   buildLayers();
   checkReturning();
   updateProgressDisplay();
   updateHeroCTA();
   checkPaidAccess();
+  checkReviewerUnlocks();
   if (window.speechSynthesis) { window.speechSynthesis.getVoices(); }
 };
 </script>
@@ -5357,6 +5589,52 @@ window.onload = function() {
     <p style="font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--gold);font-style:italic;margin-bottom:12px;">"In that day you will know that I am in the Father, and you in Me, and I in you." — John 14:20</p>
     <p style="font-size:15px;color:var(--gold);font-weight:600;">The eagle is back in the air. 🦅</p>
     <button class="locked-close" onclick="document.getElementById('successOverlay').classList.remove('open')" style="margin-top:20px;">Continue Reading</button>
+  </div>
+</div>
+
+<!-- REVIEWER WELCOME OVERLAY -->
+<div class="locked-overlay" id="reviewerWelcomeOverlay">
+  <div class="locked-card" style="max-width:520px;text-align:left;max-height:85vh;overflow-y:auto;">
+    <div style="font-size:44px;text-align:center;margin-bottom:10px;">🎬</div>
+    <h2 style="font-family:'Cinzel',serif;font-size:24px;color:var(--white);text-align:center;margin-bottom:6px;" id="reviewerWelcomeName">Welcome, Book Reviewer!</h2>
+    <p style="text-align:center;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;">Only 30 Reviewer Spots Available</p>
+
+    <div style="background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.25);border-radius:6px;padding:14px;margin-bottom:16px;">
+      <p style="font-size:13px;color:#2ECC71;font-weight:700;margin-bottom:8px;">Your Referral Link</p>
+      <p style="font-size:13px;color:var(--cream-2);margin-bottom:10px;">This is already yours — no sign-up needed. Share it anywhere.</p>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span id="reviewerWelcomeLink" style="flex:1;font-size:11px;color:#EDE6D6;background:rgba(0,0,0,0.3);padding:8px 10px;border-radius:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button onclick="copyReviewerLink()" id="reviewerCopyBtn" style="background:#2ECC71;border:none;color:#0A0A0F;font-size:11px;font-weight:700;padding:8px 14px;border-radius:4px;cursor:pointer;white-space:nowrap;">Copy</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <p style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:8px;">Requirements To Unlock Chapters</p>
+      <p style="font-size:13px;color:var(--cream-2);line-height:1.6;margin-bottom:8px;">Record a short video review — <strong>2 to 9 minutes</strong>. It must open with this exact line:</p>
+      <p style="font-size:13px;color:var(--gold-2,var(--gold));font-style:italic;border-left:2px solid var(--gold);padding-left:10px;margin-bottom:8px;">"I am reading the book FOURNITY: Celebrating our Union with God in Christ Jesus — Father. Son. Holy Spirit. And the Adopted: You."</p>
+      <p style="font-size:13px;color:var(--cream-2);line-height:1.6;margin-bottom:8px;">After that, share it in your own words. Then <strong>pin your affiliate link as the first comment</strong> on your post — this is how sales get credited to you and how you get paid.</p>
+      <p style="font-size:13px;color:var(--cream-2);line-height:1.6;">Submit just <strong>one screenshot</strong> of your posted video — that's all that's needed.</p>
+    </div>
+
+    <p style="font-size:13px;color:var(--cream-2);line-height:1.6;margin-bottom:18px;">Every confirmed review unlocks your next chapter, and you earn 20% on every sale through your link. Reach 10 confirmed sales, and you're offered Book Distributor Rights across every Zero2Billionaires digital publication, present and future.</p>
+
+    <a href="reviewer-submit.html" target="_blank" rel="noopener" style="display:block;text-align:center;background:linear-gradient(135deg,#8a6d1f,#C9A84C);color:#0A0A0F;font-weight:700;font-size:14px;padding:14px;border-radius:4px;text-decoration:none;margin-bottom:10px;">Submit Your Review Here</a>
+    <button class="locked-close" onclick="document.getElementById('reviewerWelcomeOverlay').classList.remove('open')" style="width:100%;">Read First, Come Back Later</button>
+  </div>
+</div>
+
+<!-- MY REFERRAL LINK OVERLAY (for readers who are not book reviewers) -->
+<div class="locked-overlay" id="myRefLinkOverlay">
+  <div class="locked-card" style="max-width:480px;text-align:center;">
+    <div style="font-size:44px;margin-bottom:10px;">🔗</div>
+    <h2 style="font-family:'Cinzel',serif;font-size:22px;color:var(--white);margin-bottom:10px;" id="myRefLinkName">Welcome!</h2>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--cream-2);line-height:1.6;margin-bottom:16px;">You're registered — and you already have your own FOURNITY referral link. Share it with anyone. When someone buys the book through your link, you earn <strong style="color:#2ECC71;">20%</strong>, automatically.</p>
+    <div style="display:flex;gap:8px;align-items:center;background:rgba(0,0,0,0.3);border:1px solid rgba(201,168,76,0.25);border-radius:4px;padding:10px 12px;margin-bottom:18px;">
+      <span id="myRefLinkText" style="flex:1;font-size:12px;color:#EDE6D6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;"></span>
+      <button onclick="copyMyRefLink()" id="myRefLinkCopyBtn" style="background:#2ECC71;border:none;color:#0A0A0F;font-size:11px;font-weight:700;padding:8px 14px;border-radius:4px;cursor:pointer;white-space:nowrap;">Copy</button>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Want to earn faster? Post a video review and unlock chapters as you go — tap "Become a Book Reviewer" below anytime.</p>
+    <button class="locked-close" onclick="document.getElementById('myRefLinkOverlay').classList.remove('open')" style="width:100%;">Continue Reading</button>
   </div>
 </div>
 
