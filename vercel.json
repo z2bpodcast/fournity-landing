@@ -1,0 +1,12 @@
+{
+  "framework": "nextjs",
+  "rewrites": [
+    { "source": "/invitation", "destination": "/invitation.html" }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/fournity-daily",
+      "schedule": "0 4 * * *"
+    }
+  ]
+}
