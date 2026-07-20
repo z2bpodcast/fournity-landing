@@ -386,7 +386,7 @@ export default function Home() {
             <div className={styles.actCard}>
               <div className={`${styles.actDot} ${styles.actDotLoss}`}>2</div>
               <div className={`${styles.actLabel} ${styles.actLabelLoss}`}>Genesis 3</div>
-              <div className={styles.actVerse}>Rupture</div>
+              <div className={styles.actVerse}>SIN</div>
               <p className={styles.actText}>
                 The Fall did not just bring sin — it severed the union. Humanity lost sight
                 of the identity it was given before it existed to ask for it.
