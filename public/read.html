@@ -252,6 +252,20 @@ body { background:var(--deep); color:var(--cream); font-family:'Inter',sans-seri
 .workbook-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.25); color:var(--gold); padding:10px 20px; border-radius:3px; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; margin-top:8px; transition:all 0.2s; font-family:'Inter',sans-serif; }
 .workbook-btn:hover { background:rgba(201,168,76,0.18); }
 .phase-card { background:rgba(201,168,76,0.06); border-left:3px solid var(--gold-dark); border-radius:2px; padding:14px 16px; margin-bottom:12px; }
+.switch-step { border-radius:6px; padding:20px 18px; margin-bottom:14px; position:relative; }
+.switch-step-1 { background:rgba(201,168,76,0.09); border:1px solid rgba(201,168,76,0.35); }
+.switch-step-2 { background:rgba(224,140,50,0.10); border:1px solid rgba(224,140,50,0.4); }
+.switch-step-3 { background:rgba(200,50,50,0.12); border:1px solid rgba(200,50,50,0.45); }
+.switch-step-4 { background:rgba(140,20,60,0.14); border:1px solid rgba(140,20,60,0.5); }
+.switch-step-head { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.switch-step-icon { font-size:32px; line-height:1; }
+.switch-step-num { font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+.switch-step-1 .switch-step-num { color:var(--gold); }
+.switch-step-2 .switch-step-num { color:#E08C32; }
+.switch-step-3 .switch-step-num { color:#E85555; }
+.switch-step-4 .switch-step-num { color:#C13A6E; }
+.switch-step-title { font-family:'Cinzel',serif; font-size:22px; font-weight:700; color:#F5F0E8; }
+.switch-step-arrow { text-align:center; font-size:22px; color:var(--gold-dark); margin:-6px 0 8px; opacity:0.7; }
 .phase-num { font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--gold); text-transform:uppercase; font-weight:700; margin-bottom:6px; }
 .phase-verse { font-style:italic; color:#D8D0C0; font-size:14px; margin:6px 0; display:block; }
 .phase-note { color:#C8C8D0; font-size:14px; margin:0; }
@@ -1139,7 +1153,7 @@ const layers = [
 <h3>The Ancient History of The Triquetra</h3>
 <p>The Triquetra traces back to approximately 1200 BC — long before the New Testament, long before the early Church, and long before any formal Christian theological system attempted to describe the Trinity.</p>
 <h3>Beauty Is In The Eye Of The Beholder</h3>
-<p>So when you see this shape on the cover of this book, on a page, on the symbol I have chosen to carry FOURNITY's message — know exactly what it is being asked to say. Not a pagan deity. Not three sisters with a spell book. Father. Son. Holy Spirit. And, at the centre, you — held, not because you fought your way in, but because Three who were already in perfect Union made room for a fourth. That is the only story this symbol is telling in these pages.</p>
+<p>So when you see this shape on the cover of this book, on a page, on the symbol I have chosen to carry FOURNITY's message — know exactly what it is being asked to say. Father. Son. Holy Spirit. And, at the centre, you — held, not because you fought your way in, but because Three who were already in perfect Union made room for a fourth. That is the only story this symbol is telling in these pages.</p>
 <p>They say a picture is worth a thousand words. I have found that to be true of this one. This shape has been claimed by more than one hand across history, and it will keep being claimed by more than one hand after me. Both the Kingdom of Light and the kingdom of darkness can look at the very same three arcs and see something different — and they will, because beauty, like meaning, is in the eye of the beholder. I cannot control what another person sees when they look at three interlocking arcs. I can only tell you what I saw.</p>
 <p>I saw infinite beauty in this ancient artwork — beauty that existed long before I gave it words. And when I looked long enough at the small arc that appears only in the centre, where the three outer arcs meet and make room for a fourth shape that did not exist on its own — that centre arc explained to me, in a single glance, what a thousand sentences of theology had been trying to say my whole life. I did not need new words. I needed to actually see it.</p>
 <p>But hear me clearly, because this matters more than the symbol itself: I do not venerate this shape. I do not pray to it, light a candle before it, or ask it for anything. It has no power of its own to give or withhold. It is not an object of worship, and it must never become one — not for me, and not for you. A drawing cannot save anyone. Only the Union it represents can. The moment any symbol receives the trust that belongs only to Christ, the forbidden line we spoke of in the Conclusion of this book has already been crossed. So look at this shape, let it move you the way it moved me — and then look past it, every single time, to the only One it was ever drawn to point toward.</p>
@@ -1851,7 +1865,7 @@ const layers = [
           { ref:'Romans 8:37', notes:['"In all these things we are more than conquerors" — the word\'s final word on every version of "did God actually say."'] }
         ],
         body:`<div class="scripture-box"><p>"Did God actually say...?"</p><div class="scripture-ref">Genesis 3:1</div></div>
-<p class="drop-cap-p">Six words. And with those six words, the enemy introduced into the human experience something that had never existed before — something that did not belong in the garden of perfect Union, something for which the human being had no defence because they had never encountered it:</p>
+<p class="drop-cap-p">Four words. And with those four words, the enemy introduced into the human experience something that had never existed before — something that did not belong in the garden of perfect Union, something for which the human being had no defence because they had never encountered it:</p>
 <p>Doubt.</p>
 <p>Not doubt in the philosophical sense — not the healthy questioning that leads to deeper understanding and stronger faith. But doubt as a weapon. Doubt as a tool of destabilisation. Doubt as the thin edge of a wedge that, once inserted between a person and the word of God, can be driven deeper and deeper until the entire structure of their identity collapses.</p>
 <p>The enemy has been asking the same question ever since. He has never needed a new strategy — because this one has never stopped working. In every generation, in every culture, in every individual life, the assault on identity begins in exactly the same place:</p>
@@ -1908,7 +1922,8 @@ const layers = [
       },
       { num:14, title:'The Great Switch', verse:'Genesis 3:6-7 | 2 Corinthians 4:4 | Luke 4:6', free:false,
         deepDive:[
-          { ref:'Genesis 3:6', notes:['The anchor. "She took of its fruit and ate... he ate." Twelve words. The Switch was a choice — which means it was avoidable, and a choice can be reversed.'] },
+          { ref:'Genesis 3:6', notes:['The anchor. "She took of its fruit and ate... he ate." Ten words. The Switch was a choice — which means it was avoidable, and a choice can be reversed.'] },
+          { ref:'Romans 5:12', notes:['"Sin entered the world through one man" — the domain transfer this chapter traces did not stay contained; it spread the moment it was given, hand to hand, to another.'] },
           { ref:'Genesis 3:7', notes:['"The eyes of both were opened, and they knew that they were naked." The enemy\'s promise technically kept — but what they saw was themselves, not divine wisdom.'] },
           { ref:'Genesis 3:10', notes:['"I was afraid, because I was naked, and I hid myself." The presence that had been their delight, now experienced as threat.'] },
           { ref:'1 John 4:18', notes:['"Perfect love casts out fear" — the exact thing that broke the moment the Union broke. Fear entered where perfect love had reigned.'] },
@@ -1920,10 +1935,30 @@ const layers = [
           { ref:'Colossians 2:15', notes:['"Having spoiled principalities and powers, he made a shew of them openly, triumphing over them" — the legal defeat of the enemy\'s claim, undoing what Luke 4:6 admitted was surrendered.'] }
         ],
         body:`<div class="scripture-box"><p>"So when the woman saw that the tree was good for food, and that it was a delight to the eyes, and that the tree was to be desired to make one wise, she took of its fruit and ate, and she also gave some to her husband who was with her, and he ate."</p><div class="scripture-ref">Genesis 3:6</div></div>
-<p class="drop-cap-p">Twelve words describe the actual act: "she took of its fruit and ate, and he ate." Twelve words that altered the trajectory of every human life that would ever follow. Notice the progression that led to those twelve words. Three things happened before the eating:</p>
-<p>She saw — the enemy first redirected her attention. From God. From the word. From the identity she carried. To the fruit. To the immediate. To the visible rather than the eternal. The attack on identity always begins with a redirection of attention. You cannot hold two visions simultaneously — the vision of who God says you are and the vision of what the enemy is offering. One will dominate. The enemy worked to make the fruit fill the female Adam's entire field of vision until the word of God had shrunk to a whisper in the background.</p>
-<p>She considered — "good for food... a delight to the eyes... desired to make one wise." The female Adam evaluated the fruit against her own reasoning rather than against the word of God. Once the enemy has redirected your attention from the word to the temptation, the next move is to engage your reason in an evaluation process that has already been corrupted by the distorted attention. You cannot think your way out of a deception that entered through your vision. You can only return to the word.</p>
-<p>She took — and then the act. The deliberate, voluntary, self-initiated act of reaching for what God had withheld. Not an accident. Not a mistake. A choice. Made by a being with free will, in a garden of abundance, surrounded by every good thing God had provided — who chose, in that moment, to trust the serpent's word over God's word.</p>
+<p class="drop-cap-p">Ten words describe the actual act: "she took of its fruit and ate, and he ate." Ten words that altered the trajectory of every human life that would ever follow. Notice the progression that led to those ten words. Four things happened before — and through — the eating:</p>
+
+<div class="switch-step switch-step-1">
+<div class="switch-step-head"><span class="switch-step-icon">👁️</span><div><div class="switch-step-num">Step One</div><div class="switch-step-title">She Saw</div></div></div>
+<p style="margin:0;">The enemy first redirected her attention. From God. From the word. From the identity she carried. To the fruit. To the immediate. To the visible rather than the eternal. The attack on identity always begins with a redirection of attention. You cannot hold two visions simultaneously — the vision of who God says you are and the vision of what the enemy is offering. One will dominate. The enemy worked to make the fruit fill the female Adam's entire field of vision until the word of God had shrunk to a whisper in the background.</p>
+</div>
+<div class="switch-step-arrow">↓</div>
+
+<div class="switch-step switch-step-2">
+<div class="switch-step-head"><span class="switch-step-icon">⚖️</span><div><div class="switch-step-num">Step Two</div><div class="switch-step-title">She Considered</div></div></div>
+<p style="margin:0;">"Good for food... a delight to the eyes... desired to make one wise." The female Adam evaluated the fruit against her own reasoning rather than against the word of God. Once the enemy has redirected your attention from the word to the temptation, the next move is to engage your reason in an evaluation process that has already been corrupted by the distorted attention. You cannot think your way out of a deception that entered through your vision. You can only return to the word.</p>
+</div>
+<div class="switch-step-arrow">↓</div>
+
+<div class="switch-step switch-step-3">
+<div class="switch-step-head"><span class="switch-step-icon">🖐️</span><div><div class="switch-step-num">Step Three</div><div class="switch-step-title">She Took</div></div></div>
+<p style="margin:0;">And then the act. The deliberate, voluntary, self-initiated act of reaching for what God had withheld. Not an accident. Not a mistake. A choice. Made by a being with free will, in a garden of abundance, surrounded by every good thing God had provided — who chose, in that moment, to trust the serpent's word over God's word.</p>
+</div>
+<div class="switch-step-arrow">↓</div>
+
+<div class="switch-step switch-step-4">
+<div class="switch-step-head"><span class="switch-step-icon">🤝</span><div><div class="switch-step-num">Step Four</div><div class="switch-step-title">She Gave</div></div></div>
+<p style="margin:0;">"And gave also unto her husband with her; and he did eat." This is the step easiest to skip past, and the one this chapter cannot afford to skip. The Switch did not stay contained to one person. Genesis 3:6 records that Adam was "with her" the entire time — not absent, not deceived by the serpent directly, but present and silent while the conversation happened. And when she reached out her hand, she did not just eat. She gave. What had entered through deception in one soul was now being deliberately transferred, hand to hand, into another. This is the moment the Switch stopped being a private failure and became a shared inheritance — the moment the domain transfer Paul describes in Romans 5:12 ("sin entered the world through one man") actually began to spread beyond the one who first reached for the fruit.</p>
+</div>
 <p>The Switch was a choice. Which is both the most sobering and the most hopeful truth of this chapter. Sobering — because it means the catastrophe of Genesis 3 was avoidable. Hopeful — because a switch that was activated by a choice can be reversed by a choice.</p>
 <h3>What Changed The Moment They Ate</h3>
 <p>Genesis 3:7 records the immediate consequences:</p>
