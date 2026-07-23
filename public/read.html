@@ -266,6 +266,26 @@ body { background:var(--deep); color:var(--cream); font-family:'Inter',sans-seri
 .switch-step-4 .switch-step-num { color:#C13A6E; }
 .switch-step-title { font-family:'Cinzel',serif; font-size:22px; font-weight:700; color:#F5F0E8; }
 .switch-step-arrow { text-align:center; font-size:22px; color:var(--gold-dark); margin:-6px 0 8px; opacity:0.7; }
+.stone-recap { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:20px 0 6px; }
+.stone-recap-item { background:linear-gradient(135deg,#3a2f14,#1f1a0c); border:1px solid var(--gold-dark); border-radius:50% 45% 48% 42%/42% 48% 45% 50%; padding:16px 12px; text-align:center; flex:1 1 100px; max-width:140px; }
+.stone-recap-icon { font-size:26px; display:block; margin-bottom:6px; }
+.stone-recap-num { font-family:'Cinzel',serif; font-size:9px; color:var(--gold); letter-spacing:1px; text-transform:uppercase; }
+.stone-recap-name { font-family:'Cinzel',serif; font-size:13px; color:#F5F0E8; font-weight:700; margin-top:2px; }
+.deepp-step { display:flex; align-items:flex-start; gap:14px; background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.25); border-radius:6px; padding:14px 16px; margin-bottom:10px; }
+.deepp-step-icon { font-size:26px; line-height:1; flex-shrink:0; margin-top:2px; }
+.deepp-step-letter { font-family:'Cinzel',serif; font-size:20px; font-weight:700; color:var(--gold); display:inline-block; width:22px; }
+.deepp-step-title { font-family:'Cinzel',serif; font-size:15px; font-weight:700; color:#F5F0E8; margin-bottom:4px; }
+.deepp-step-body { font-size:14px; color:#D8D0C0; margin:0; }
+.type-pair { display:flex; align-items:stretch; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+.type-box { flex:1 1 150px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.14); border-radius:6px; padding:14px; }
+.type-box-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#8A8A9A; margin-bottom:6px; }
+.type-box-name { font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:#F5F0E8; margin-bottom:4px; }
+.type-box-desc { font-size:13px; color:#C8C8D0; margin:0; }
+.type-arrow { flex-basis:100%; text-align:center; font-size:18px; color:var(--gold-dark); margin:-2px 0; opacity:0.8; }
+.fulfill-box { flex:1 1 150px; background:rgba(201,168,76,0.09); border:1px solid rgba(201,168,76,0.4); border-radius:6px; padding:14px; }
+.fulfill-box-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+.fulfill-box-name { font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:#F5F0E8; margin-bottom:4px; }
+.fulfill-box-desc { font-size:13px; color:#EDE6D6; margin:0; }
 .phase-num { font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--gold); text-transform:uppercase; font-weight:700; margin-bottom:6px; }
 .phase-verse { font-style:italic; color:#D8D0C0; font-size:14px; margin:6px 0; display:block; }
 .phase-note { color:#C8C8D0; font-size:14px; margin:0; }
@@ -1630,6 +1650,14 @@ const layers = [
         ],
         body:`<div class="scripture-box"><p>"Whereby are given unto us exceeding great and precious promises: that by these ye might be partakers of the divine nature, having escaped the corruption that is in the world through lust."</p><div class="scripture-ref">2 Peter 1:4</div></div>
 <p class="drop-cap-p">All five stones are now in the bag: Given. Knowledge. Divine Power. Divine Nature. Partakers. This is the fifth stone. The final chapter of Layer 2. And perhaps the most practical of all five — because this is where everything we have celebrated lands on the earth.</p>
+<div class="stone-recap">
+<div class="stone-recap-item"><span class="stone-recap-icon">🎁</span><div class="stone-recap-num">Stone 1</div><div class="stone-recap-name">Given</div></div>
+<div class="stone-recap-item"><span class="stone-recap-icon">📖</span><div class="stone-recap-num">Stone 2</div><div class="stone-recap-name">Knowledge</div></div>
+<div class="stone-recap-item"><span class="stone-recap-icon">⚡</span><div class="stone-recap-num">Stone 3</div><div class="stone-recap-name">Divine Power</div></div>
+<div class="stone-recap-item"><span class="stone-recap-icon">🌿</span><div class="stone-recap-num">Stone 4</div><div class="stone-recap-name">Divine Nature</div></div>
+<div class="stone-recap-item"><span class="stone-recap-icon">🤝</span><div class="stone-recap-num">Stone 5</div><div class="stone-recap-name">Partakers</div></div>
+</div>
+<p style="text-align:center;color:var(--gold);font-style:italic;font-size:13px;margin:0 0 20px;">Five stones. One Fournity bag. Ready for what comes next.</p>
 <p>We have celebrated that everything pertaining to life and godliness has been given (Chapter 6). We have celebrated that knowledge of Christ unlocks exponential access to what was given (Chapter 7). We have celebrated that divine power — flowing from all four dimensions of God's divinity — is the source of everything given and the breath that made the difference (Chapter 8). We have celebrated that we are partakers of the divine nature — participating in God's essence, attributes, deity and economy — the centre arc of the Triquetra, God's address on earth (Chapter 9).</p>
 <h3>Now the question this final chapter must answer is this:</h3>
 <p>So what?</p>
@@ -2060,14 +2088,30 @@ const layers = [
 <p>Stop running away. Be confident. The more we run, the more we break — until we find ourselves in our Lo-debar. Lo-debar was the place where Mephibosheth was living when King David sent for him (2 Samuel 9:4-5). The Hebrew name Lo-debar (‫ )ֹלא ְד ָב ר‬is commonly understood to mean:</p>
 <p>"No pasture" "No thing" "Without word" "Place of barrenness"</p>
 <p>Stop running away, dear reader. God loves you too much to leave you at Lo-debar.</p>
-<p>We have our Ziba — Mephibosheth's destiny helper is a type of the Holy Spirit, our Helper.</p>
-<p>We have Jesus Christ — a type of Prince Jonathan, who secured restoration for his posterity when he cut a covenant on behalf of the coming generation.</p>
+<div class="type-pair">
+<div class="type-box"><div class="type-box-label">The Type</div><div class="type-box-name">Ziba</div><p class="type-box-desc">Mephibosheth's destiny helper — the one who searched him out and brought him back from Lo-debar.</p></div>
+<div class="type-arrow">→</div>
+<div class="fulfill-box"><div class="fulfill-box-label">Fulfilled In</div><div class="fulfill-box-name">The Holy Spirit</div><p class="fulfill-box-desc">Our Helper — who searches us out and leads us home.</p></div>
+</div>
+<div class="type-pair">
+<div class="type-box"><div class="type-box-label">The Type</div><div class="type-box-name">Prince Jonathan</div><p class="type-box-desc">Cut a covenant securing restoration for the coming generation, long before Mephibosheth ever needed it.</p></div>
+<div class="type-arrow">→</div>
+<div class="fulfill-box"><div class="fulfill-box-label">Fulfilled In</div><div class="fulfill-box-name">Jesus Christ</div><p class="fulfill-box-desc">Our Covenant-Maker — who secured our restoration on our behalf, before we ever knew we needed it.</p></div>
+</div>
 <p>Oh! Glory be to God in the highest! Somebody praise the Lord with me and celebrate our Big Brother Jesus of Nazareth — who made a covenant with the everlasting God on behalf of the restoration of His siblings!</p>
-<p>We have Jesus Christ — a type of King David, our Redeemer.</p>
-<p>We have Jesus Christ — our Mephibosheth, our Shame Remover.</p>
+<div class="type-pair">
+<div class="type-box"><div class="type-box-label">The Type</div><div class="type-box-name">King David</div><p class="type-box-desc">The king who remembered the covenant and restored the one everyone else had forgotten.</p></div>
+<div class="type-arrow">→</div>
+<div class="fulfill-box"><div class="fulfill-box-label">Fulfilled In</div><div class="fulfill-box-name">Jesus Christ</div><p class="fulfill-box-desc">Our Redeemer — the King who remembers His covenant and restores what was forgotten.</p></div>
+</div>
+<div class="type-pair">
+<div class="type-box"><div class="type-box-label">The Type</div><div class="type-box-name">Mephibosheth</div><p class="type-box-desc">Crippled, hidden, ashamed — until his shame was fully removed and he was called to sit at the king's table.</p></div>
+<div class="type-arrow">→</div>
+<div class="fulfill-box"><div class="fulfill-box-label">Fulfilled In</div><div class="fulfill-box-name">Jesus Christ</div><p class="fulfill-box-desc">Our Shame Remover — who does for us exactly what David did for Mephibosheth.</p></div>
+</div>
 <p>Go read the full story in 2 Samuel chapter 9.</p>
 <p>Stop running away.</p>
-<p>Romans 8:1 — The End of Hiding</p>
+<h3>Romans 8:1 — The End of Hiding</h3>
 <p>The entirety of this book exists to announce the end of the hiding place. The fig leaves have been replaced. The trees no longer provide cover — not because God found us and punished us, but because there is nothing left to hide from.</p>
 <p>Romans 8:1 — the most liberating sentence in the New Testament — declares it with the finality of a judge pronouncing a verdict that cannot be appealed:</p>
 <p>"There is therefore now no condemnation for those who are in Christ Jesus."</p>
@@ -3148,13 +3192,26 @@ const layers = [
 <h3>The Five Sound Bible Interpretation Disciplines — DEEPP™</h3>
 <p>But naming the phases is not the same as understanding what each text is actually saying — and here is where sound handling of Scripture matters more than ever, because it would be easy to read Luke 22, Romans 5, and Revelation 3:21 side by side and assume they describe the same moment, the same audience, the same tense. They do not. To handle this rightly, I want to walk you through five disciplines every serious student of Scripture learns to apply, one after another, before drawing a conclusion — what I have come to call DEEPP™: Dig Deeper. Interpret Soundly. Live Faithfully.</p>
 
-<ul class="oicav-list">
-<li><strong>D — Discover (Exegesis / Observation).</strong> What does the text actually say? Not what I assume it says. Not what I have heard it means. What are the words on the page. Observe the text before interpreting it.</li>
-<li><strong>E — Explain (Hermeneutics / Interpretation).</strong> What did the inspired author intend to communicate to the original audience? Interpret the text within its historical, literary, and grammatical context.</li>
-<li><strong>E — Examine (Biblical Theology / Correlation).</strong> What do the rest of the Scriptures say about this same subject? Let Scripture interpret Scripture.</li>
-<li><strong>P — Prove (Systematic Theology / Verification).</strong> What doctrine is established by the whole counsel of God? Establish doctrine from the whole Bible, not from isolated verses.</li>
-<li><strong>P — Practice (Practical Theology / Homiletics).</strong> How should I live and faithfully teach this truth to others? Live the truth and faithfully pass it on to others.</li>
-</ul>
+<div class="deepp-step">
+<span class="deepp-step-icon">🔍</span>
+<div><div class="deepp-step-title"><span class="deepp-step-letter">D</span> — Discover <span style="font-weight:400;font-size:12px;color:#8A8A9A;">(Exegesis / Observation)</span></div><p class="deepp-step-body">What does the text actually say? Not what I assume it says. Not what I have heard it means. What are the words on the page. Observe the text before interpreting it.</p></div>
+</div>
+<div class="deepp-step">
+<span class="deepp-step-icon">💬</span>
+<div><div class="deepp-step-title"><span class="deepp-step-letter">E</span> — Explain <span style="font-weight:400;font-size:12px;color:#8A8A9A;">(Hermeneutics / Interpretation)</span></div><p class="deepp-step-body">What did the inspired author intend to communicate to the original audience? Interpret the text within its historical, literary, and grammatical context.</p></div>
+</div>
+<div class="deepp-step">
+<span class="deepp-step-icon">🔗</span>
+<div><div class="deepp-step-title"><span class="deepp-step-letter">E</span> — Examine <span style="font-weight:400;font-size:12px;color:#8A8A9A;">(Biblical Theology / Correlation)</span></div><p class="deepp-step-body">What do the rest of the Scriptures say about this same subject? Let Scripture interpret Scripture.</p></div>
+</div>
+<div class="deepp-step">
+<span class="deepp-step-icon">⚖️</span>
+<div><div class="deepp-step-title"><span class="deepp-step-letter">P</span> — Prove <span style="font-weight:400;font-size:12px;color:#8A8A9A;">(Systematic Theology / Verification)</span></div><p class="deepp-step-body">What doctrine is established by the whole counsel of God? Establish doctrine from the whole Bible, not from isolated verses.</p></div>
+</div>
+<div class="deepp-step">
+<span class="deepp-step-icon">🌱</span>
+<div><div class="deepp-step-title"><span class="deepp-step-letter">P</span> — Practice <span style="font-weight:400;font-size:12px;color:#8A8A9A;">(Practical Theology / Homiletics)</span></div><p class="deepp-step-body">How should I live and faithfully teach this truth to others? Live the truth and faithfully pass it on to others.</p></div>
+</div>
 
 <p style="text-align:center;color:var(--gold);font-style:italic;margin:18px 0;">Discover. Explain. Examine. Prove. Practice.<br>Dig Deeper. Interpret Soundly. Live Faithfully.</p>
 
