@@ -286,6 +286,13 @@ body { background:var(--deep); color:var(--cream); font-family:'Inter',sans-seri
 .fulfill-box-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
 .fulfill-box-name { font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:#F5F0E8; margin-bottom:4px; }
 .fulfill-box-desc { font-size:13px; color:#EDE6D6; margin:0; }
+.element-grid { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:18px 0 8px; }
+.element-card { flex:1 1 130px; max-width:160px; background:linear-gradient(160deg,rgba(201,168,76,0.1),rgba(0,0,0,0.2)); border:1px solid rgba(201,168,76,0.3); border-radius:8px; padding:16px 12px; text-align:center; }
+.element-icon { font-size:32px; display:block; margin-bottom:8px; }
+.element-name { font-family:'Cinzel',serif; font-size:14px; font-weight:700; color:#F5F0E8; margin-bottom:6px; letter-spacing:0.5px; }
+.element-verse { font-size:11px; color:var(--gold); font-style:italic; line-height:1.4; }
+.fire-climax { background:linear-gradient(160deg,rgba(180,40,20,0.18),rgba(60,10,10,0.3)); border:1px solid rgba(220,80,40,0.45); border-radius:8px; padding:22px 20px; margin:20px 0; }
+.fire-climax-label { font-family:'Cinzel',serif; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#E8A055; margin-bottom:10px; text-align:center; }
 .phase-num { font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--gold); text-transform:uppercase; font-weight:700; margin-bottom:6px; }
 .phase-verse { font-style:italic; color:#D8D0C0; font-size:14px; margin:6px 0; display:block; }
 .phase-note { color:#C8C8D0; font-size:14px; margin:0; }
@@ -3378,7 +3385,11 @@ const layers = [
           { ref:'1 Kings 18:38', notes:['Fire falling on Elijah\'s altar — the same signature, now resting not on a sacrifice but on a person.'] },
           { ref:'Acts 2:11', notes:['"We hear them telling in our own tongues the mighty works of God" — the first Spirit-filled act was declaration, in every language simultaneously.'] },
           { ref:'Genesis 11', notes:['The Tower of Babel — where God divided the languages. Pentecost is Babel run in reverse, division healed by the Spirit rather than judgment.'] },
-          { ref:'John 16:14-15', notes:['"He will take what is Mine and declare it to you" — the Spirit\'s purpose stated by Jesus the night before the breath and the wind would both be needed.'] }
+          { ref:'John 16:14-15', notes:['"He will take what is Mine and declare it to you" — the Spirit\'s purpose stated by Jesus the night before the breath and the wind would both be needed.'] },
+          { ref:'John 7:38', notes:['"Out of his heart will flow rivers of living water" — the element of Water, the overflow that fills once wind and fire have done their work.'] },
+          { ref:'2 Corinthians 4:7', notes:['"This treasure in earthen vessels" — the element of Earth, the humble dust the fire and wind were poured into in the first place.'] },
+          { ref:'Hebrews 12:29', notes:['"Our God is a consuming fire" — the same fire that indwells the redeemed gently is, by nature, capable of consuming completely.'] },
+          { ref:'Revelation 20:7-9', notes:['The Fire of Gog and Magog — the same fire that fell as a gift in the upper room falls one final time as judgment, consuming every enemy of God forever.'] }
         ],
         body:`<div class="scripture-box"><p>"And suddenly there came from heaven a sound like a mighty rushing wind, and it filled the entire house where they were sitting. And divided tongues as of fire appeared to them and rested on each one of them. And they were all filled with the Holy Spirit."</p><div class="scripture-ref">Acts 2:2-4</div></div>
 <p class="drop-cap-p">There are two mornings in human history that divide time more decisively than any other.</p>
@@ -3399,42 +3410,60 @@ const layers = [
 <p>Because everything they had received externally — through observation and instruction and relationship — needed to be replicated internally, through the indwelling presence of the Spirit who would take everything that belonged to Jesus and give it to them (John 16:14-15).</p>
 <p>External knowledge becomes internal power only through the Holy Spirit. Positional truth becomes experiential reality only through the Holy Spirit.</p>
 <p>They waited. And what came was worth waiting for.</p>
-<p>Acts 2:1-4 — The Arrival of the Divine Resident Four elements. Each one theologically loaded. Each one a deliberate echo of earlier moments in the story of God and humanity:</p>
+<h3>The Four Elements of God's Homecoming</h3>
+<p>Scripture describes what happened that morning using the oldest language creation has for describing God's presence — the four elements the ancient world understood the physical universe to be built from: wind, fire, water and earth. All four appear across the story of the Spirit's homecoming. Two of them — wind and fire — appear in this very chapter, in the upper room itself. The other two — water and earth — are just as present, just described elsewhere in the same unfolding story. Before we go deep into the two that fell that morning, here are all four, together:</p>
+
+<div class="element-grid">
+<div class="element-card"><span class="element-icon">💨</span><div class="element-name">Wind</div><div class="element-verse">"A mighty rushing wind" — Acts 2:2</div></div>
+<div class="element-card"><span class="element-icon">🔥</span><div class="element-name">Fire</div><div class="element-verse">"Tongues as of fire" — Acts 2:3</div></div>
+<div class="element-card"><span class="element-icon">💧</span><div class="element-name">Water</div><div class="element-verse">"Streams of living water" — John 7:38</div></div>
+<div class="element-card"><span class="element-icon">🌍</span><div class="element-name">Earth</div><div class="element-verse">"This treasure in earthen vessels" — 2 Corinthians 4:7</div></div>
+</div>
+
+<p>Water is the promise Jesus made at the Feast of Tabernacles: "Whoever believes in Me, as the Scripture has said, out of his heart will flow rivers of living water" (John 7:38) — the Spirit's overflow, described the moment He gives us language for what indwelling produces. Earth is what we already are before the Spirit ever arrives — formed "of the dust of the ground" (Genesis 2:7), the very reason Paul can say "we have this treasure in earthen vessels, to show that the surpassing power belongs to God and not to us" (2 Corinthians 4:7). Water is what flows out of us once filled. Earth is the humble container the fire and wind were poured into in the first place.</p>
+
+<p>But wind and fire are the two elements Acts 2:2-4 names as actually falling that morning — the visible, audible signature of Heaven arriving in a room in Jerusalem. This chapter goes deep on those two, because this chapter is about that morning specifically. Water and earth describe what we already are and what flows from us afterward. Wind and fire describe what came.</p>
+
+<h3>The Wind</h3>
 <p>The sound of a mighty rushing wind — pneuma in Greek means both wind and spirit. And this is not the first time the wind of God has appeared at a pivotal moment of creation and renewal.</p>
 <p>"The Spirit of God was hovering over the face of the waters." — Genesis 1:2</p>
 <p>The same Spirit who was present at the original creation — hovering over the formless void, about to participate in the speaking of everything into existence — now came again, with the sound of a mighty rushing wind, to participate in a new creation. The new creation of the reborn human spirit. The wind that blew in the upper room was the same Spirit that hovered over the waters — coming home to the dwelling place He had always been destined for.</p>
-<p>The tongues of fire — fire in Scripture is consistently the sign of divine presence. The burning bush (Exodus 3:2). The pillar of fire in the wilderness (Exodus 13:21). The fire on Elijah's altar (1 Kings 18:38). The glory filling the Temple as fire (2 Chronicles 7:1-3). Fire is the visible signature of God making His presence known.</p>
-<p>And now — not on a mountain, not in a burning bush, not in a Temple made with hands — tongues of fire resting on individual human beings. The dwelling place of God is no longer a mountain or a building. The fire is resting on people. The Temple of God is now human.</p>
-<p>The filling — epimplemi — filled completely, to the full. Not a partial indwelling. Not a preliminary measure of the Spirit to be supplemented later. They were filled. All of them. The one hundred and twenty. Together. Simultaneously. Completely. The Divine Resident moving into His dwelling place and filling every room.</p>
-<p>The tongues — they began to speak in languages they had never learned — the specific dialects of every nation represented in Jerusalem for the Feast of Pentecost. The crowds outside heard Galileans speaking with perfect fluency in Parthian, Median, Elamite, the languages of Mesopotamia, Judea, Cappadocia, Pontus, Asia, Phrygia, Pamphylia, Egypt, Libya.</p>
-<p>"We hear them telling in our own tongues the mighty works of God." (Acts 2:11)</p>
-<p>The first thing the Spirit-filled people did was declare the mighty works of God — in every language simultaneously.</p>
-<p>The Tower of Babel — where God had divided the languages as a response to humanity's disconnection from God and their rebellion against the mandate to fill the earth (Genesis 11) — was being reversed. Pentecost is the restoration of what Babel divided. The Spirit-filled,</p>
-<h3>Fournity-restored, God-indwelt human being was becoming the instrument through which</h3>
-<p>the division of Babel was healed — and every language on earth was used to declare the glory of God.</p>
-<p>The Breath and the Wind — Understanding John 20 and Acts 2 One of the most misunderstood relationships in the New Testament is between Jesus breathing upon His disciples after His resurrection and the outpouring of the Holy Spirit on the Day of Pentecost.</p>
+<h3>The Breath and the Wind — Understanding John 20 and Acts 2</h3>
+<p>One of the most misunderstood relationships in the New Testament is between Jesus breathing upon His disciples after His resurrection and the outpouring of the Holy Spirit on the Day of Pentecost.</p>
 <p>Some conclude that the disciples received the Holy Spirit twice. Others argue that John 20 was merely symbolic and that the Holy Spirit came only at Pentecost.</p>
 <p>The Scriptures reveal something far more beautiful.</p>
-<p>John 20 and Acts 2 are not competing accounts of the same event. They are two successive movements in the unfolding of God's original and eternal purpose. Together they reveal God's everlasting homecoming. "And when He had said this, He breathed on them and said to them, 'Receive the Holy Spirit.'" — John 20:22</p>
+<p>John 20 and Acts 2 are not competing accounts of the same event. They are two successive movements in the unfolding of God's original and eternal purpose. Together they reveal God's everlasting homecoming.</p>
+<p>"And when He had said this, He breathed on them and said to them, 'Receive the Holy Spirit.'" — John 20:22</p>
 <p>The verb — emphusao — to breathe into, to blow upon. The same verb used in the Greek translation of Genesis 2:7 — "God breathed into his nostrils the breath of life."</p>
 <p>Between Genesis 2:7 and John 20:22 lies the entire narrative of the fall, the exile, the longing, the promise, the cross and the resurrection. Between the first breath and the second breath lies the whole story of what happens when the Union is broken and what it costs to restore it.</p>
 <p>And in John 20:22, Jesus breathes again. The Second Adam restoring what the First Adam lost. The breath-connection of Union between the human spirit and the Divine — given back by the One who conquered everything that had severed it.</p>
-<h3>The progression is unmistakable:</h3>
-<p>John 4 — The Well (regeneration, life within promised) John 20 — The Breath (the well opened through the risen Christ) John 7 — The Rivers (the promise of overflow) Acts 2 — The Wind (the rivers begin to flow to the nations)</p>
-<p>John 20 restored the well. Acts 2 released the rivers.</p>
-<p>John 20 restored life. Acts 2 clothed that life with power.</p>
-<p>John 20 restored communion. Acts 2 commissioned the Church.</p>
-<p>John 20 regenerated. Acts 2 empowered.</p>
-<p>The breath restored the individual. The wind filled the corporate Body of Christ.</p>
-<p>If the disciples had already received the Holy Spirit in John 20 — why did Jesus command them to remain in Jerusalem?</p>
-<p>Because regeneration was not the completion of God's purpose. It was its preparation.</p>
-<p>Only regenerated vessels could become the dwelling place of the Holy Spirit in His fullness. Only restored sons could become empowered witnesses. Only living temples could be filled with God's manifest presence.</p>
-<p>Ephesians 1 — The Eternal Blueprint Fulfilled Ephesians 1 — God's original and eternal purpose. Genesis 2 — The purpose revealed in creation. The Fall — The purpose interrupted in history. John 4 — Jesus promises the restoration of life within. John 7 — Jesus promises the outflow of life from within. John 20 — Jesus regenerates the human spirit. Acts 2 — The regenerated believer becomes God's Spirit- filled dwelling and a river to the nations. The upper room was not simply the birthplace of the Church. It was the celebration of God's everlasting homecoming.</p>
-<p>The God who had always desired to dwell with humanity had finally found His permanent residence. The well had become a river. The breath had become the wind. The promise had become reality.</p>
-<p>God had come home.</p>
-<div class="illumination-box"><div class="illum-label">💡 Illumination</div><p>There are two successive movements in God's homecoming — not one. John 20 was the breath: the regeneration of the human spirit, the well of living water restored. Acts 2 was the wind: the empowering of the regenerated vessel, the rivers flowing to the nations. You cannot separate them and you cannot confuse them. One restored the dwelling. The other filled it with the manifest presence of the divine. Both are necessary. Both are yours. The well and the river. The breath and the wind.</p></div>
+<h3>The progression is unmistakable</h3>
+<p>John 4 — The Well (regeneration, life within promised).<br>John 20 — The Breath (the well opened through the risen Christ).<br>John 7 — The Rivers (the promise of overflow — water, the element already introduced above).<br>Acts 2 — The Wind (the rivers begin to flow to the nations).</p>
+<p>John 20 restored the well. Acts 2 released the rivers. John 20 restored life. Acts 2 clothed that life with power. John 20 restored communion. Acts 2 commissioned the Church. John 20 regenerated. Acts 2 empowered. The breath restored the individual. The wind filled the corporate Body of Christ.</p>
+<p>If the disciples had already received the Holy Spirit in John 20 — why did Jesus command them to remain in Jerusalem? Because regeneration was not the completion of God's purpose. It was its preparation. Only regenerated vessels could become the dwelling place of the Holy Spirit in His fullness. Only restored sons could become empowered witnesses. Only living temples could be filled with God's manifest presence.</p>
+<p>The well had become a river. The breath had become the wind. The promise had become reality. God had come home.</p>
+
+<h3>The Fire</h3>
+<p>Fire in Scripture is consistently the sign of divine presence. The burning bush (Exodus 3:2). The pillar of fire in the wilderness (Exodus 13:21). The fire on Elijah's altar (1 Kings 18:38). The glory filling the Temple as fire (2 Chronicles 7:1-3). Fire is the visible signature of God making His presence known.</p>
+<p>And now — not on a mountain, not in a burning bush, not in a Temple made with hands — tongues of fire resting on individual human beings. The dwelling place of God is no longer a mountain or a building. The fire is resting on people. The Temple of God is now human.</p>
+<p>"For our God is a consuming fire." — Hebrews 12:29</p>
+<p>"He is like a refiner's fire." — Malachi 3:2</p>
+<p>Fire in Scripture never means only one thing. It purifies. It reveals. It consumes. On the day of Pentecost, that same fire rested gently on human heads — a fire that indwells rather than destroys, because those it fell upon had already been covered by the blood of the Lamb. But fire that indwells the redeemed is not the only fire Scripture speaks of. There is another fire still coming. And it does not fall gently.</p>
+
+<div class="fire-climax">
+<div class="fire-climax-label">🔥 The Fire of Gog and Magog</div>
+<p>"And when the thousand years are ended, Satan will be released from his prison and will come out to deceive the nations... to gather them for battle... and they marched up over the broad plain of the earth and surrounded the camp of the saints and the beloved city, but fire came down from heaven and consumed them." — Revelation 20:7-9</p>
+<p>This is the fire I have come to celebrate as much as the fire of the upper room — because it is the same fire, aimed at a different target. The fire that fell as a gift on the redeemed in Acts 2 will one day fall as final judgment on every enemy who ever opposed God — Satan, his armies, every trace of rebellion that has ever raised itself against the throne. Not a partial defeat. Not a temporary setback. Fire from heaven, consuming Gog and Magog completely, once and for all, closing forever a door that will never open again.</p>
+<p>The upper room and the final battlefield are connected by the same fire, wearing two different purposes. On the redeemed, fire indwells. On the rebellious, fire consumes. Pentecost was the down payment. Revelation 20:9 is the final settlement. The same fire that filled you is the fire that will finish him.</p>
+</div>
+
+<p>The filling — epimplemi — filled completely, to the full. Not a partial indwelling. Not a preliminary measure of the Spirit to be supplemented later. They were filled. All of them. The one hundred and twenty. Together. Simultaneously. Completely. The Divine Resident moving into His dwelling place and filling every room.</p>
+<p>And what does a Spirit-filled life do first? It speaks. They began to speak in languages they had never learned — the specific dialects of every nation represented in Jerusalem for the Feast of Pentecost. The crowds outside heard Galileans speaking with perfect fluency in Parthian, Median, Elamite, the languages of Mesopotamia, Judea, Cappadocia, Pontus, Asia, Phrygia, Pamphylia, Egypt, Libya.</p>
+<p>"We hear them telling in our own tongues the mighty works of God." — Acts 2:11</p>
+<p>The first thing the Spirit-filled people did was declare the mighty works of God — in every language simultaneously. The Tower of Babel — where God had divided the languages as a response to humanity's disconnection from God and their rebellion against the mandate to fill the earth (Genesis 11) — was being reversed. Pentecost is the restoration of what Babel divided. The Spirit-filled, Fournity-restored, God-indwelt human being was becoming the instrument through which the division of Babel was healed — and every language on earth was used to declare the glory of God.</p>
+<div class="illumination-box"><div class="illum-label">💡 Illumination</div><p>There are two elements that fell in that upper room, not one. The wind was the breath completed — the regeneration of the human spirit, the well of living water released as a river to the nations. The fire was the presence made visible — resting gently on the redeemed as a permanent indwelling, and one day falling as consuming judgment on everything that opposes God, once and for all, at Gog and Magog. The same fire. Two purposes. It indwells the redeemed. It consumes the rebellious. Both are yours to celebrate — the fire in you now, and the fire that finishes every enemy later.</p></div>
 <div class="lightup-box"><div class="lightup-label">🔦 Light Up Moment</div><p> Jesus told the disciples to wait. Not because the wait was passive — but because what was coming required prepared vessels. The breath of John 20 had regenerated their spirits. The wait of Acts 1 was the space between receiving the new life and receiving the power to make that new life flow as a river to the nations. Are you in a waiting season right now? Do not mistake the wait for abandonment. You may be in the ten days between John 20 and Acts 2 — already regenerated, already restored, about to be filled with the wind that will release the rivers.</p></div>
-<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this as a declaration of what the upper room accomplished in you: "The resurrection changed what was legally possible. Pentecost made it experientially available. I am not waiting for the Spirit to come — He has come. I am not waiting for God to move in — He has moved in. The breath of John 20 has regenerated my spirit. The wind of Acts 2 has filled me with power. The well has become a river. The Babel of division has been reversed in me — and every part of my life is now available to declare the mighty works of God. I am not the upper room before Acts 2. I am the upper room after. Filled. Commissioned. Empowered. The wind is blowing — in me and through me." Chapter 27 of 40 | Illumination Layer 6: I — Indwelt by the Holy Spirit Since John 20:22 and Acts Chapter 2</p></div>
+<div class="declaration-box"><div class="decl-label">✍️ Declaration</div><p>Speak this as a declaration of what the upper room accomplished in you: "The resurrection changed what was legally possible. Pentecost made it experientially available. I am not waiting for the Spirit to come — He has come. I am not waiting for God to move in — He has moved in. The breath of John 20 has regenerated my spirit. The wind of Acts 2 has filled me with power. The fire that rests on me now is the same fire that will one day consume every enemy of God completely, at Gog and Magog, forever. The well has become a river. The Babel of division has been reversed in me — and every part of my life is now available to declare the mighty works of God. I am not the upper room before Acts 2. I am the upper room after. Filled. Commissioned. Empowered. The wind is blowing and the fire is burning — in me and through me." Chapter 27 of 40 | Illumination Layer 6: I — Indwelt by the Holy Spirit Since John 20:22 and Acts Chapter 2</p></div>
 <button class="workbook-btn" onclick="openWorkbook(5,1)">📖 Open Chapter 27 Workbook</button>`,
         workbook:{ title:'Chapter 27 Workbook — The Spirit Searches The Deep Things of God',
           questions:[
